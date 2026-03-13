@@ -1074,6 +1074,8 @@ function agendaReSyncDay(dateStr){
 }
 function fmtH(h){const hrs=Math.floor(h);const m=Math.round((h-hrs)*60);return hrs+'h'+(m?String(m).padStart(2,'0'):'');}
 let planTab='template';
+let planMobileDay=(new Date().getDay()+6)%7;
+let planMobileAgendaDate=new Date().toISOString().slice(0,10);
 function switchPlanTab(t){planTab=t;document.querySelectorAll('.plan-tab').forEach(b=>b.classList.toggle('active',b.dataset.tab===t));renderPlanContent();}
 function renderPlan(){
   initPlanState();
@@ -1089,7 +1091,49 @@ function renderPlan(){
 }
 function renderPlanContent(){
   const el=document.getElementById('plan-grid-wrap');if(!el)return;
+  if(window.innerWidth<768){renderMobilePlan(el);return;}
   if(planTab==='template')renderTemplateGrid(el);else renderAgendaGrid(el);
+}
+function renderMobilePlan(el){
+  const DAYS_FULL=['Lundi','Mardi','Mercredi','Jeudi','Vendredi','Samedi','Dimanche'];
+  const todayDow=(new Date().getDay()+6)%7;
+  const todayStr=new Date().toISOString().slice(0,10);
+  if(planTab==='template'){
+    const prev=(planMobileDay+6)%7;
+    const next=(planMobileDay+1)%7;
+    const evs=[...(S.weekTemplate[planMobileDay]||[])].sort((a,b)=>a.startH-b.startH);
+    const isToday=planMobileDay===todayDow;
+    let h=`<div class="day-nav">
+      <button class="day-nav-btn" onclick="planMobileDay=${prev};renderPlanContent()">←</button>
+      <div class="day-nav-label${isToday?' today':''}">${DAYS_FULL[planMobileDay]}${isToday?' <span style="font-size:11px;font-weight:500;opacity:.55">· auj</span>':''}</div>
+      <button class="day-nav-btn" onclick="planMobileDay=${next};renderPlanContent()">→</button>
+    </div><div style="display:flex;flex-direction:column;gap:8px">`;
+    evs.forEach(ev=>{const hex=colorHex(ev.color);h+=`<div style="background:${hex}18;border:1px solid ${hex}33;border-left:3px solid ${hex};border-radius:10px;padding:12px 14px;cursor:pointer" onclick="tgEvClick(event,'${ev.id}','${planMobileDay}')"><div style="font-size:11px;color:${hex};font-family:var(--mono);margin-bottom:4px">${fmtH(ev.startH)} → ${fmtH(ev.endH)}</div><div style="font-size:14px;font-weight:700;color:var(--text)">${ev.label}</div></div>`;});
+    if(!evs.length)h+=`<div style="color:var(--muted);font-size:13px;padding:16px 0;text-align:center">Aucun événement ce jour</div>`;
+    h+=`</div><button class="btn btn-ghost btn-sm" style="margin-top:12px;width:100%" onclick="openEvModal(null,${planMobileDay},8,'template')">+ Ajouter un événement</button>`;
+    el.innerHTML=h;
+  } else {
+    agendaSyncDay(planMobileAgendaDate);
+    const d=new Date(planMobileAgendaDate+'T12:00');
+    const dow=(d.getDay()+6)%7;
+    const isToday=planMobileAgendaDate===todayStr;
+    const prev=new Date(planMobileAgendaDate+'T12:00');prev.setDate(prev.getDate()-1);
+    const next=new Date(planMobileAgendaDate+'T12:00');next.setDate(next.getDate()+1);
+    const prevStr=prev.toISOString().slice(0,10);
+    const nextStr=next.toISOString().slice(0,10);
+    const evs=(S.agendaEvents||[]).filter(ev=>ev.date===planMobileAgendaDate).sort((a,b)=>a.startH-b.startH);
+    let h=`<div class="day-nav">
+      <button class="day-nav-btn" onclick="planMobileAgendaDate='${prevStr}';renderPlanContent()">←</button>
+      <div class="day-nav-label${isToday?' today':''}">${DAYS_FULL[dow]} ${d.getDate()}/${d.getMonth()+1}${isToday?' <span style="font-size:11px;font-weight:500;opacity:.55">· auj</span>':''}</div>
+      <button class="day-nav-btn" onclick="planMobileAgendaDate='${nextStr}';renderPlanContent()">→</button>
+    </div>`;
+    h+=`<div style="text-align:center;margin-bottom:12px"><input type="date" value="${planMobileAgendaDate}" onchange="planMobileAgendaDate=this.value;renderPlanContent()" style="background:var(--glass2);border:1px solid var(--border);border-radius:8px;padding:6px 12px;color:var(--text);font-family:var(--mono);font-size:12px;outline:none;text-align:center"></div>`;
+    h+=`<div style="display:flex;flex-direction:column;gap:8px">`;
+    evs.forEach(ev=>{const hex=colorHex(ev.color);h+=`<div style="background:${hex}18;border:1px solid ${hex}33;border-left:3px solid ${hex};border-radius:10px;padding:12px 14px;cursor:pointer" onclick="tgEvClick(event,'${ev.id}','${planMobileAgendaDate}')"><div style="font-size:11px;color:${hex};font-family:var(--mono);margin-bottom:4px">${fmtH(ev.startH)} → ${fmtH(ev.endH)}</div><div style="font-size:14px;font-weight:700;color:var(--text)">${ev.label}</div></div>`;});
+    if(!evs.length)h+=`<div style="color:var(--muted);font-size:13px;padding:16px 0;text-align:center">Aucun événement ce jour</div>`;
+    h+=`</div><button class="btn btn-ghost btn-sm" style="margin-top:12px;width:100%" onclick="openEvModal(null,'${planMobileAgendaDate}',8,'agenda')">+ Ajouter un événement</button>`;
+    el.innerHTML=h;save();
+  }
 }
 function buildTimeGrid(days,getEvs){
   const hours=[];for(let h=PLAN_SH;h<PLAN_EH;h++)hours.push(h);
