@@ -697,6 +697,23 @@ hr{border:none;border-top:1px solid var(--border);margin:16px 0}
       </div>
     </div>
     <div class="card gap">
+      <div class="card-title">📦 Backup GitHub automatique</div>
+      <div style="font-size:12px;color:var(--muted);margin-bottom:12px">Crée un commit JSON à chaque modification · Historique complet sur GitHub · Récupérable à tout moment</div>
+      <div class="ev-field" style="margin-bottom:10px">
+        <div style="font-family:var(--mono);font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px">Personal Access Token <span style="color:rgba(212,255,0,.5)">(Settings → Developer settings → Tokens → repo)</span></div>
+        <input type="password" id="gh-token" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx">
+      </div>
+      <div class="ev-field" style="margin-bottom:10px">
+        <div style="font-family:var(--mono);font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px">Repo GitHub (utilisateur/nom-repo)</div>
+        <input type="text" id="gh-repo" placeholder="mon-user/overview-backup">
+      </div>
+      <div class="irow">
+        <button class="btn btn-sm" onclick="saveGHConfig()">Activer</button>
+        <button class="btn btn-ghost btn-sm" onclick="backupToGithub(true)">Tester maintenant</button>
+        <span id="gh-status" style="font-family:var(--mono);font-size:10px;color:var(--muted)"></span>
+      </div>
+    </div>
+    <div class="card gap">
       <div class="card-title">🔄 Sync Firebase (cross-device)</div>
       <div style="font-size:12px;color:var(--muted);margin-bottom:10px">Colle ta config Firebase pour sync PC ↔ iPhone en temps réel</div>
       <textarea id="cfg-fb" rows="6" style="background:rgba(255,255,255,.05);border:1px solid var(--border);border-radius:var(--r2);padding:10px 14px;color:var(--text);font-family:var(--mono);font-size:11px;outline:none;width:100%;resize:vertical" placeholder='{"apiKey":"...","authDomain":"...","databaseURL":"...","projectId":"...","storageBucket":"...","messagingSenderId":"...","appId":"..."}'></textarea>
@@ -839,6 +856,7 @@ const save=()=>{
   S._ts=Date.now();
   localStorage.setItem('jtb3',JSON.stringify(S));
   if(fbReady&&fbRef){ignoreNext=true;fbRef.set(S);showSync('↑')}
+  scheduleGHBackup();
 };
 const td=()=>new Date().toISOString().slice(0,10);
 const tm=()=>td().slice(0,7);
@@ -1402,6 +1420,12 @@ function renderCfg(){
   const fb=localStorage.getItem('jtb3_fb');
   if(fb)document.getElementById('cfg-fb').value=fb;
   document.getElementById('fb-status').textContent=fbReady?'✓ Connecté':'Non connecté';
+  const gh=JSON.parse(localStorage.getItem('jtb3_gh')||'null');
+  if(gh){
+    if(gh.token)document.getElementById('gh-token').value=gh.token;
+    if(gh.repo)document.getElementById('gh-repo').value=gh.repo;
+    document.getElementById('gh-status').textContent='✓ Configuré';
+  }
 }
 function saveStart(){const v=document.getElementById('cfg-start').value;if(!v)return;S.start90=v;save();r90();renderCfg()}
 function saveCfg(){
@@ -1409,6 +1433,48 @@ function saveCfg(){
   S.revObj=parseFloat(document.getElementById('cfg-rev').value)||2000;save();renderCfg();
 }
 function resetAll(){if(!confirm('Supprimer toutes les données ?'))return;localStorage.removeItem('jtb3');localStorage.removeItem('jtb3_fb');location.reload()}
+
+// ═══ GITHUB BACKUP ═══
+let _ghTimer=null;
+function scheduleGHBackup(){
+  clearTimeout(_ghTimer);
+  _ghTimer=setTimeout(()=>backupToGithub(),3*60*1000);
+}
+function saveGHConfig(){
+  const token=document.getElementById('gh-token').value.trim();
+  const repo=document.getElementById('gh-repo').value.trim();
+  const st=document.getElementById('gh-status');
+  if(!token||!repo){st.textContent='Token et repo requis';return;}
+  localStorage.setItem('jtb3_gh',JSON.stringify({token,repo}));
+  st.textContent='Sauvegardé — test en cours...';
+  backupToGithub(true);
+}
+async function backupToGithub(manual=false){
+  const gh=JSON.parse(localStorage.getItem('jtb3_gh')||'null');
+  if(!gh||!gh.token||!gh.repo)return;
+  const ghEl=document.getElementById('gh-status');
+  const done=S.todos?S.todos.filter(t=>t.done).length:0;
+  const total=S.todos?S.todos.length:0;
+  const now=new Date();
+  const msg=`backup ${now.toISOString().slice(0,16).replace('T',' ')} — ${done}/${total} tâches`;
+  const content=btoa(unescape(encodeURIComponent(JSON.stringify(S,null,2))));
+  const path='overview-backup.json';
+  const url=`https://api.github.com/repos/${gh.repo}/contents/${path}`;
+  const headers={'Authorization':'token '+gh.token,'Content-Type':'application/json','Accept':'application/vnd.github+json'};
+  try{
+    let sha='';
+    const cur=await fetch(url,{headers});
+    if(cur.ok){const d=await cur.json();sha=d.sha||'';}
+    const res=await fetch(url,{method:'PUT',headers,body:JSON.stringify({message:msg,content,...(sha?{sha}:{})})});
+    if(res.ok){
+      if(ghEl)ghEl.textContent=`✓ ${now.toLocaleTimeString('fr')}`;
+    }else{
+      const err=await res.json().catch(()=>({}));
+      if(ghEl)ghEl.textContent='✗ '+(err.message||'Erreur GitHub');
+    }
+  }catch(e){if(ghEl)ghEl.textContent='✗ '+e.message;}
+}
+document.addEventListener('visibilitychange',()=>{if(document.hidden)backupToGithub();});
 function exportData(){
   const json=JSON.stringify(S,null,2);
   const blob=new Blob([json],{type:'application/json'});
