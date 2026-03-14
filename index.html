@@ -321,6 +321,9 @@ hr{border:none;border-top:1px solid var(--border);margin:16px 0}
   html,body{overflow:auto}
   .app{height:auto;min-height:100vh;flex-direction:column;overflow:visible}
   .main{overflow:visible}
+  .tg-mob-wrap .tg-outer{max-height:calc(100vh - 320px);overflow-x:hidden}
+  .tg-mob-wrap .tg-day-col{min-width:0;flex:1}
+  .tg-mob-wrap .tg-day-head{font-size:10px}
   .card-big{font-size:28px}
   .ph-title{font-size:22px}
 }
@@ -458,6 +461,15 @@ hr{border:none;border-top:1px solid var(--border);margin:16px 0}
         <span class="score-badge" id="h-score">0/10</span>
       </div>
       <div id="h-todos"></div>
+    </div>
+
+    <!-- PAST DAYS CHECKLIST -->
+    <div class="card gap" id="h-past-card" style="display:none">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+        <div class="card-title" style="margin:0">Jours précédents</div>
+        <span class="score-badge" id="h-past-toggle" style="cursor:pointer;user-select:none" onclick="togglePastDays()">Voir ↓</span>
+      </div>
+      <div id="h-past-days" style="display:none"></div>
     </div>
 
     <!-- DISCIPLINE HISTORY -->
@@ -829,8 +841,8 @@ const DAILY=[
   {id:'t2',label:'Méditation 30 min',done:false,cat:'mental'},
   {id:'t3',label:'Prospecter 20 entreprises',done:false,cat:'business'},
   {id:'t4',label:'Travail agence 3h+',done:false,cat:'business'},
-  {id:'t5',label:'Code de la route 1h',done:false,cat:'code'},
-  {id:'t6',label:'n8n / IA 30 min',done:false,cat:'ia'},
+  {id:'t5',label:'Code de la route 1h',done:false,cat:'code',scheduleTag:'route'},
+  {id:'t6',label:'n8n / IA 30 min',done:false,cat:'ia',scheduleTag:'n8n'},
   {id:'t7',label:'2L eau minimum',done:false,cat:'corps'},
   {id:'t8',label:'Lumière du jour 15 min',done:false,cat:'corps'},
   {id:'t9',label:'Lecture 30 min',done:false,cat:'mental'},
@@ -866,6 +878,22 @@ function getBaseRoutine(){
   if(!S.baseRoutine||!S.baseRoutine.length)S.baseRoutine=DAILY.map(x=>({id:x.id,label:x.label,cat:x.cat}));
   return S.baseRoutine;
 }
+function buildTodosForDay(base,dateStr){
+  const dailyMap=Object.fromEntries(DAILY.map(d=>[d.id,d]));
+  const dow=(new Date(dateStr+'T12:00').getDay()+6)%7;
+  const tmplEvs=(S.weekTemplate&&Array.isArray(S.weekTemplate)&&S.weekTemplate[dow])||[];
+  const agEvs=(S.agendaEvents||[]).filter(ev=>ev.date===dateStr);
+  const allEvLabels=[...tmplEvs,...agEvs].map(ev=>ev.label.toLowerCase());
+  const hasSchedule=allEvLabels.length>0;
+  return base.map(x=>{
+    const daily=dailyMap[x.id];
+    if(daily&&daily.scheduleTag&&hasSchedule){
+      const tag=daily.scheduleTag.toLowerCase();
+      if(!allEvLabels.some(l=>l.includes(tag)))return null;
+    }
+    return {...x,done:false};
+  }).filter(Boolean);
+}
 function dailyReset(){
   const t=td();
   if(!S.todoHistory)S.todoHistory=[];
@@ -875,13 +903,13 @@ function dailyReset(){
       const done=S.todos.filter(x=>x.done).length;
       const total=S.todos.length;
       if(!S.todoHistory.find(h=>h.date===S.checkDate)){
-        S.todoHistory.push({date:S.checkDate,done,total});
+        S.todoHistory.push({date:S.checkDate,done,total,items:S.todos.map(x=>({id:x.id,label:x.label,cat:x.cat,done:x.done}))});
         if(S.todoHistory.length>90)S.todoHistory=S.todoHistory.slice(-90);
       }
     }
-    S.checkDate=t;S.todos=base.map(x=>({...x,done:false}));save();
+    S.checkDate=t;S.todos=buildTodosForDay(base,t);save();
   } else if(!S.todos||!S.todos.length){
-    S.todos=base.map(x=>({...x,done:false}));save();
+    S.todos=buildTodosForDay(base,t);save();
   }
 }
 
@@ -981,6 +1009,7 @@ function renderHome(){
   document.getElementById('h-seance').textContent=ls?ls.type:'—';
   document.getElementById('h-seance-d').textContent=ls?ls.date:'Aucune séance';
   renderMiniTodos();
+  renderPastDays();
   renderHistory();
 }
 function renderMiniTodos(){
@@ -1031,6 +1060,54 @@ function renderHistory(){
     const avg=Math.round(all.reduce((s,h)=>s+h.done/h.total*100,0)/all.length);
     document.getElementById('h-avg').textContent=`Moyenne : ${avg}% · ${all.length} jour${all.length>1?'s':''} tracké${all.length>1?'s':''}`;
   }
+}
+
+// ═══ PAST DAYS ═══
+let _pastOpen=false;
+function togglePastDays(){
+  _pastOpen=!_pastOpen;
+  const el=document.getElementById('h-past-days');
+  const btn=document.getElementById('h-past-toggle');
+  el.style.display=_pastOpen?'':'none';
+  btn.textContent=_pastOpen?'Réduire ↑':'Voir ↓';
+  if(_pastOpen)renderPastDaysContent();
+}
+function renderPastDays(){
+  if(!S.todoHistory||!S.todoHistory.length){document.getElementById('h-past-card').style.display='none';return;}
+  document.getElementById('h-past-card').style.display='';
+  if(_pastOpen)renderPastDaysContent();
+}
+function renderPastDaysContent(){
+  const el=document.getElementById('h-past-days');
+  if(!S.todoHistory||!S.todoHistory.length){el.innerHTML='<div style="color:var(--muted);font-size:12px">Aucun historique.</div>';return;}
+  const recent=[...S.todoHistory].sort((a,b)=>b.date.localeCompare(a.date)).slice(0,7);
+  const D=['dim','lun','mar','mer','jeu','ven','sam'];
+  el.innerHTML=recent.map(h=>{
+    const d=new Date(h.date+'T12:00');
+    const dayLabel=D[d.getDay()]+' '+h.date.slice(8)+'/'+String(d.getMonth()+1).padStart(2,'0');
+    const pct=h.total?Math.round(h.done/h.total*100):0;
+    const color=pct>=80?'var(--accent)':pct>=50?'var(--green)':pct>=20?'var(--orange)':'var(--red)';
+    const items=h.items||[];
+    return `<div style="margin-bottom:12px;border-bottom:1px solid var(--border);padding-bottom:12px">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
+        <div style="font-size:13px;font-weight:700">${dayLabel}</div>
+        <span style="font-family:var(--mono);font-size:10px;color:${color}">${h.done}/${h.total} · ${pct}%</span>
+      </div>
+      ${items.length?items.map(t=>`<div class="ci ${t.done?'done':''}" onclick="toggleHistoryItem('${h.date}','${t.id}')">
+        <div class="ci-box"></div><span class="ci-label" style="font-size:12px">${t.label}</span><span class="ci-cat">${t.cat||''}</span>
+      </div>`).join(''):'<div style="color:var(--muted);font-size:11px;font-style:italic">Détail non disponible</div>'}
+    </div>`;
+  }).join('');
+}
+function toggleHistoryItem(date,id){
+  if(!S.todoHistory)return;
+  const h=S.todoHistory.find(x=>x.date===date);
+  if(!h||!h.items)return;
+  const item=h.items.find(x=>x.id===id);
+  if(!item)return;
+  item.done=!item.done;
+  h.done=h.items.filter(x=>x.done).length;
+  save();renderPastDaysContent();renderHistory();
 }
 
 // ═══ TODO ═══
@@ -1210,17 +1287,15 @@ function renderMobilePlan(el){
   if(planTab==='template'){
     const prev=(planMobileDay+6)%7;
     const next=(planMobileDay+1)%7;
-    const evs=[...(S.weekTemplate[planMobileDay]||[])].sort((a,b)=>a.startH-b.startH);
     const isToday=planMobileDay===todayDow;
-    let h=`<div class="day-nav">
+    const nav=`<div class="day-nav">
       <button class="day-nav-btn" onclick="planMobileDay=${prev};renderPlanContent()">←</button>
       <div class="day-nav-label${isToday?' today':''}">${DAYS_FULL[planMobileDay]}${isToday?' <span style="font-size:11px;font-weight:500;opacity:.55">· auj</span>':''}</div>
       <button class="day-nav-btn" onclick="planMobileDay=${next};renderPlanContent()">→</button>
-    </div><div style="display:flex;flex-direction:column;gap:8px">`;
-    evs.forEach(ev=>{const hex=colorHex(ev.color);h+=`<div style="background:${hex}18;border:1px solid ${hex}33;border-left:3px solid ${hex};border-radius:10px;padding:12px 14px;cursor:pointer" onclick="tgEvClick(event,'${ev.id}','${planMobileDay}')"><div style="font-size:11px;color:${hex};font-family:var(--mono);margin-bottom:4px">${fmtH(ev.startH)} → ${fmtH(ev.endH)}</div><div style="font-size:14px;font-weight:700;color:var(--text)">${ev.label}</div></div>`;});
-    if(!evs.length)h+=`<div style="color:var(--muted);font-size:13px;padding:16px 0;text-align:center">Aucun événement ce jour</div>`;
-    h+=`</div><button class="btn btn-ghost btn-sm" style="margin-top:12px;width:100%" onclick="openEvModal(null,${planMobileDay},8,'template')">+ Ajouter un événement</button>`;
-    el.innerHTML=h;
+    </div>`;
+    const dayObj={key:String(planMobileDay),label:DAYS_FULL[planMobileDay],today:isToday,sub:''};
+    el.innerHTML=nav+`<div class="tg-mob-wrap">`+buildTimeGrid([dayObj],d=>S.weekTemplate[parseInt(d.key)]||[])+`</div>`
+      +`<button class="btn btn-ghost btn-sm" style="margin-top:12px;width:100%" onclick="openEvModal(null,${planMobileDay},8,'template')">+ Ajouter un événement</button>`;
   } else {
     agendaSyncDay(planMobileAgendaDate);
     const d=new Date(planMobileAgendaDate+'T12:00');
@@ -1230,18 +1305,16 @@ function renderMobilePlan(el){
     const next=new Date(planMobileAgendaDate+'T12:00');next.setDate(next.getDate()+1);
     const prevStr=prev.toISOString().slice(0,10);
     const nextStr=next.toISOString().slice(0,10);
-    const evs=(S.agendaEvents||[]).filter(ev=>ev.date===planMobileAgendaDate).sort((a,b)=>a.startH-b.startH);
-    let h=`<div class="day-nav">
+    const dateLabel=DAYS_FULL[dow]+' '+d.getDate()+'/'+(d.getMonth()+1);
+    const nav=`<div class="day-nav">
       <button class="day-nav-btn" onclick="planMobileAgendaDate='${prevStr}';renderPlanContent()">←</button>
-      <div class="day-nav-label${isToday?' today':''}">${DAYS_FULL[dow]} ${d.getDate()}/${d.getMonth()+1}${isToday?' <span style="font-size:11px;font-weight:500;opacity:.55">· auj</span>':''}</div>
+      <div class="day-nav-label${isToday?' today':''}">${dateLabel}${isToday?' <span style="font-size:11px;font-weight:500;opacity:.55">· auj</span>':''}</div>
       <button class="day-nav-btn" onclick="planMobileAgendaDate='${nextStr}';renderPlanContent()">→</button>
-    </div>`;
-    h+=`<div style="text-align:center;margin-bottom:12px"><input type="date" value="${planMobileAgendaDate}" onchange="planMobileAgendaDate=this.value;renderPlanContent()" style="background:var(--glass2);border:1px solid var(--border);border-radius:8px;padding:6px 12px;color:var(--text);font-family:var(--mono);font-size:12px;outline:none;text-align:center"></div>`;
-    h+=`<div style="display:flex;flex-direction:column;gap:8px">`;
-    evs.forEach(ev=>{const hex=colorHex(ev.color);h+=`<div style="background:${hex}18;border:1px solid ${hex}33;border-left:3px solid ${hex};border-radius:10px;padding:12px 14px;cursor:pointer" onclick="tgEvClick(event,'${ev.id}','${planMobileAgendaDate}')"><div style="font-size:11px;color:${hex};font-family:var(--mono);margin-bottom:4px">${fmtH(ev.startH)} → ${fmtH(ev.endH)}</div><div style="font-size:14px;font-weight:700;color:var(--text)">${ev.label}</div></div>`;});
-    if(!evs.length)h+=`<div style="color:var(--muted);font-size:13px;padding:16px 0;text-align:center">Aucun événement ce jour</div>`;
-    h+=`</div><button class="btn btn-ghost btn-sm" style="margin-top:12px;width:100%" onclick="openEvModal(null,'${planMobileAgendaDate}',8,'agenda')">+ Ajouter un événement</button>`;
-    el.innerHTML=h;save();
+    </div><div style="text-align:center;margin-bottom:8px"><input type="date" value="${planMobileAgendaDate}" onchange="planMobileAgendaDate=this.value;renderPlanContent()" style="background:var(--glass2);border:1px solid var(--border);border-radius:8px;padding:5px 10px;color:var(--text);font-family:var(--mono);font-size:12px;outline:none"></div>`;
+    const dayObj={key:planMobileAgendaDate,label:dateLabel,today:isToday,sub:''};
+    el.innerHTML=nav+`<div class="tg-mob-wrap">`+buildTimeGrid([dayObj],d=>(S.agendaEvents||[]).filter(ev=>ev.date===d.key))+`</div>`
+      +`<button class="btn btn-ghost btn-sm" style="margin-top:12px;width:100%" onclick="openEvModal(null,'${planMobileAgendaDate}',8,'agenda')">+ Ajouter un événement</button>`;
+    save();
   }
 }
 function buildTimeGrid(days,getEvs){
