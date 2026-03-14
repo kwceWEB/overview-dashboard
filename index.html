@@ -1142,13 +1142,13 @@ let _ciDragIdx=null,_ciDragList=null;
 function _ciHtml(t,i,list){
   const isDone=t.done?'done':'';
   const toggle=list==='todos'?`toggleTodo(${i},false)`:`toggleExtra(${i})`;
-  return `<div class="ci ${isDone}" draggable="true"
+  return `<div class="ci ${isDone}" data-idx="${i}" data-list="${list}" draggable="true"
     ondragstart="ciDragStart(event,${i},'${list}')"
     ondragover="ciDragOver(event)"
     ondragleave="ciDragLeave(event)"
     ondrop="ciDrop(event,${i},'${list}')"
     ondragend="ciDragEnd(event)">
-    <div class="ci-drag" onclick="event.stopPropagation()">⠿</div>
+    <div class="ci-drag" onclick="event.stopPropagation()" ontouchstart="ciHandleTouchStart(event,${i},'${list}')">⠿</div>
     <div class="ci-box" onclick="${toggle}"></div>
     <span class="ci-label" onclick="${toggle}">${t.label}</span>
     <span class="ci-cat">${t.cat||''}</span>
@@ -1209,6 +1209,105 @@ function ciDrop(e,targetIdx,list){
   }
   _ciDragIdx=null;save();renderTodo();
 }
+
+// ═══ TOUCH DRAG & DROP ═══
+const _td={active:false,type:null,id:null,ghost:null,offY:0,srcEl:null,dragIdx:null,dragList:null};
+let _tdStartX=0,_tdStartY=0;
+function _tdGhost(src,cy){
+  if(_td.ghost)_td.ghost.remove();
+  const r=src.getBoundingClientRect();
+  const g=src.cloneNode(true);
+  g.style.cssText=`position:fixed;z-index:9999;pointer-events:none;opacity:.75;width:${r.width}px;height:${r.height}px;left:${r.left}px;top:${cy-_td.offY}px;border-radius:6px;box-shadow:0 8px 24px rgba(0,0,0,.5);margin:0`;
+  document.body.appendChild(g);_td.ghost=g;
+}
+// Planning: drag si mouvement > 8px
+function tgTouchStart(e,evId){
+  if(e.touches.length>1)return;
+  const t=e.touches[0];
+  _td.type='planning';_td.active=false;_td.id=evId;_td.srcEl=e.currentTarget;
+  _td.offY=t.clientY-e.currentTarget.getBoundingClientRect().top;
+  _tdStartX=t.clientX;_tdStartY=t.clientY;
+}
+// Checklist: drag depuis la poignée uniquement
+function ciHandleTouchStart(e,idx,list){
+  if(e.touches.length>1)return;
+  e.stopPropagation();e.preventDefault();
+  const t=e.touches[0];
+  const el=e.target.closest('.ci');
+  _td.type='checklist';_td.active=true;_td.dragIdx=idx;_td.dragList=list;_td.srcEl=el;
+  _td.offY=t.clientY-el.getBoundingClientRect().top;
+  _tdStartX=t.clientX;_tdStartY=t.clientY;
+  el.style.opacity='.25';
+  _tdGhost(el,t.clientY);
+}
+document.addEventListener('touchmove',function(e){
+  if(!_td.type)return;
+  const t=e.touches[0];
+  if(_td.type==='planning'&&!_td.active){
+    if(Math.abs(t.clientY-_tdStartY)>8||Math.abs(t.clientX-_tdStartX)>8){
+      _td.active=true;_td.srcEl.style.opacity='.25';_tdGhost(_td.srcEl,t.clientY);
+    }
+  }
+  if(_td.active&&_td.ghost){
+    e.preventDefault();
+    _td.ghost.style.top=(t.clientY-_td.offY)+'px';
+  }
+},{passive:false});
+document.addEventListener('touchend',function(e){
+  if(!_td.type){return;}
+  const t=e.changedTouches[0];
+  if(_td.ghost){_td.ghost.remove();_td.ghost=null;}
+  if(_td.srcEl)_td.srcEl.style.opacity='';
+  if(_td.active){
+    if(_td.type==='planning'){
+      const under=document.elementFromPoint(t.clientX,t.clientY);
+      const area=under?under.closest('.tg-events-area'):null;
+      if(area){
+        const dayKey=area.dataset.daykey;
+        const rect=area.getBoundingClientRect();
+        const rawH=PLAN_SH+(t.clientY-rect.top)/PLAN_HH-(_td.offY/PLAN_HH);
+        const newSH=Math.max(PLAN_SH,Math.min(PLAN_EH-0.5,Math.round(rawH)));
+        if(planTab==='template'){
+          const ev=S.weekTemplate.flat().find(x=>x.id===_td.id);
+          if(ev){
+            let oldDow=-1;S.weekTemplate.forEach((day,di)=>{if(day.find(x=>x.id===_td.id))oldDow=di;});
+            S.weekTemplate.forEach(day=>{const i=day.findIndex(x=>x.id===_td.id);if(i>=0)day.splice(i,1);});
+            const dur=ev.endH-ev.startH;ev.startH=newSH;ev.endH=newSH+dur;
+            const newDow=parseInt(dayKey);S.weekTemplate[newDow].push(ev);
+            for(let i=0;i<60;i++){const d=new Date();d.setDate(d.getDate()+i);const ds=d.toISOString().slice(0,10);const dow=(new Date(ds+'T12:00').getDay()+6)%7;if(dow===oldDow||dow===newDow)agendaReSyncDay(ds);}
+            dailyReset();
+          }
+        } else {
+          const ev=S.agendaEvents.find(x=>x.id===_td.id);
+          if(ev){const dur=ev.endH-ev.startH;ev.startH=newSH;ev.endH=newSH+dur;ev.date=dayKey;ev.manuallyMoved=true;}
+        }
+        save();
+        const _tg=document.querySelector('.tg-outer');const _st=_tg?_tg.scrollTop:0;const _sl=_tg?_tg.scrollLeft:0;
+        renderPlanContent();renderDailyRender();
+        const _tg2=document.querySelector('.tg-outer');if(_tg2){_tg2.scrollTop=_st;_tg2.scrollLeft=_sl;}
+      }
+    } else if(_td.type==='checklist'){
+      const under=document.elementFromPoint(t.clientX,t.clientY);
+      const targetEl=under?under.closest('.ci[data-idx]'):null;
+      if(targetEl){
+        const targetIdx=parseInt(targetEl.dataset.idx);
+        const list=_td.dragList;const srcIdx=_td.dragIdx;
+        if(targetIdx!==srcIdx&&targetEl.dataset.list===list){
+          const arr=list==='todos'?S.todos:S.extraTodos;
+          const [moved]=arr.splice(srcIdx,1);arr.splice(targetIdx,0,moved);
+          if(list==='todos'&&S.baseRoutine){const [mbr]=S.baseRoutine.splice(srcIdx,1);S.baseRoutine.splice(targetIdx,0,mbr);}
+          save();renderTodo();
+        }
+      }
+    }
+  }
+  _td.active=false;_td.type=null;_td.id=null;_td.dragIdx=null;
+});
+document.addEventListener('touchcancel',function(){
+  if(_td.ghost){_td.ghost.remove();_td.ghost=null;}
+  if(_td.srcEl)_td.srcEl.style.opacity='';
+  _td.active=false;_td.type=null;_td.id=null;
+});
 
 // ═══ BUSINESS ═══
 let chRev=null;
@@ -1363,14 +1462,14 @@ function buildTimeGrid(days,getEvs){
   days.forEach((day,di)=>{
     const evs=getEvs(day,di);
     h+=`<div class="tg-day-col"><div class="tg-day-head ${day.today?'today':''}">${day.label}${day.sub?`<span style="font-size:8px;font-weight:500;opacity:.45;margin-top:1px">${day.sub}</span>`:''}</div>`;
-    h+=`<div style="position:relative;height:${totalH}px" ondragover="tgDragOver(event,this)" ondrop="tgDrop(event,'${day.key}')" onclick="tgClick(event,'${day.key}')">`;
+    h+=`<div class="tg-events-area" data-daykey="${day.key}" style="position:relative;height:${totalH}px" ondragover="tgDragOver(event,this)" ondrop="tgDrop(event,'${day.key}')" onclick="tgClick(event,'${day.key}')">`;
     hours.forEach((_,i)=>h+=`<div class="tg-cell" style="top:${i*PLAN_HH}px"></div>`);
     evs.forEach(ev=>{
       const top=(ev.startH-PLAN_SH)*PLAN_HH;
       const height=Math.max(18,(ev.endH-ev.startH)*PLAN_HH-4);
       const hex=colorHex(ev.color);
       const dur=ev.endH-ev.startH;
-      h+=`<div class="tg-event" style="top:${top+2}px;height:${height}px;background:${hex}18;border-left-color:${hex};color:${hex}" draggable="true" ondragstart="tgDragStart(event,'${ev.id}')" ondragend="tgDragEnd(event)" onclick="tgEvClick(event,'${ev.id}','${day.key}');event.stopPropagation()">
+      h+=`<div class="tg-event" style="top:${top+2}px;height:${height}px;background:${hex}18;border-left-color:${hex};color:${hex}" draggable="true" ondragstart="tgDragStart(event,'${ev.id}')" ondragend="tgDragEnd(event)" ontouchstart="tgTouchStart(event,'${ev.id}')" onclick="tgEvClick(event,'${ev.id}','${day.key}');event.stopPropagation()">
         <div style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:700">${ev.label}</div>
         ${dur>=0.4?`<div style="font-size:8px;opacity:.65">${fmtH(ev.startH)}–${fmtH(ev.endH)}</div>`:''}
       </div>`;
