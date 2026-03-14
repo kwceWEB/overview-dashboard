@@ -840,7 +840,7 @@ function showSync(icon){
 const DAILY=[
   {id:'t2',label:'Méditation 30 min',done:false,cat:'mental'},
   {id:'t3',label:'Prospecter 20 entreprises',done:false,cat:'business'},
-  {id:'t4',label:'Travail agence 3h+',done:false,cat:'business'},
+  {id:'t4',label:'Travail agence 3h+',done:false,cat:'business',scheduleTag:'agence'},
   {id:'t5',label:'Code de la route 1h',done:false,cat:'code',scheduleTag:'route'},
   {id:'t6',label:'n8n / IA 30 min',done:false,cat:'ia',scheduleTag:'n8n'},
   {id:'t7',label:'2L eau minimum',done:false,cat:'corps'},
@@ -862,7 +862,7 @@ let S=JSON.parse(localStorage.getItem('jtb3')||'null')||{
   start90:null,poidsObj:70,revObj:2000,
   revenus:[],depenses:[],seances:[],poids:[],
   todos:null,extraTodos:[],prospects:{},clients:0,checkDate:null,_ts:0,
-  todoHistory:[],nutritionChecks:{},sportChecks:{},agendaSynced:{},baseRoutine:null
+  todoHistory:[],nutritionChecks:{},sportChecks:{},agendaSynced:{},agendaExclusions:{},baseRoutine:null
 };
 const save=()=>{
   S._ts=Date.now();
@@ -878,28 +878,41 @@ function getBaseRoutine(){
   if(!S.baseRoutine||!S.baseRoutine.length)S.baseRoutine=DAILY.map(x=>({id:x.id,label:x.label,cat:x.cat}));
   return S.baseRoutine;
 }
+function calcBedtime(wakeupH){
+  // 6 cycles × 90min + 15min endormissement = 9h15
+  const bedH=wakeupH-(6*90+15)/60;
+  const h=Math.floor(bedH);
+  const m=Math.round((bedH-h)*60);
+  return h+'h'+(m?String(m).padStart(2,'0'):'');
+}
+function getTomorrowWakeup(dateStr){
+  const tomorrow=new Date(dateStr+'T12:00');tomorrow.setDate(tomorrow.getDate()+1);
+  const tStr=tomorrow.toISOString().slice(0,10);
+  agendaSyncDay(tStr);
+  const evs=(S.agendaEvents||[]).filter(ev=>ev.date===tStr).sort((a,b)=>a.startH-b.startH);
+  return evs.length?evs[0].startH:null;
+}
 function buildTodosForDay(base,dateStr){
   const dailyMap=Object.fromEntries(DAILY.map(d=>[d.id,d]));
-  const dow=(new Date(dateStr+'T12:00').getDay()+6)%7;
-  // Lire weekTemplate depuis S (chargé depuis localStorage), ou depuis DEF_TMPL si absent
-  const tmpl=S.weekTemplate&&Array.isArray(S.weekTemplate)&&S.weekTemplate.length===7
-    ?S.weekTemplate
-    :(typeof DEF_TMPL!=='undefined'?DEF_TMPL:null);
-  const tmplEvs=(tmpl&&tmpl[dow])||[];
-  const agEvs=(S.agendaEvents||[]).filter(ev=>ev.date===dateStr);
-  // N'utiliser que les événements du template (pas les agenda auto-synced depuis template)
-  const allEvLabels=[...tmplEvs,...agEvs.filter(ev=>!ev.fromTmpl)].map(ev=>ev.label.toLowerCase());
-  const hasSchedule=allEvLabels.length>0||(tmplEvs.length>0);
-  // Si le template du jour existe, filtrer. Sinon tout afficher.
-  const tmplLabels=tmplEvs.map(ev=>ev.label.toLowerCase());
-  const hasTmpl=tmplEvs.length>0;
+  // Syncer l'agenda pour aujourd'hui si pas encore fait
+  agendaSyncDay(dateStr);
+  // Lire les events agenda du jour (source de vérité pour la checklist)
+  const todayEvs=(S.agendaEvents||[]).filter(ev=>ev.date===dateStr);
+  const todayLabels=todayEvs.map(ev=>ev.label.toLowerCase());
+  const hasAgenda=todayEvs.length>0;
+  // Calcul heure coucher selon premier event de demain
+  const wakeup=getTomorrowWakeup(dateStr);
+  const sleepLabel=wakeup!==null?'Couché avant '+calcBedtime(wakeup):'Couché avant minuit';
   return base.map(x=>{
     const daily=dailyMap[x.id];
-    if(daily&&daily.scheduleTag&&hasTmpl){
+    // Items à label dynamique
+    if(x.id==='t10')return{...x,label:sleepLabel,done:false};
+    // Items filtrés par agenda (scheduleTag)
+    if(daily&&daily.scheduleTag&&hasAgenda){
       const tag=daily.scheduleTag.toLowerCase();
-      if(!tmplLabels.some(l=>l.includes(tag)))return null;
+      if(!todayLabels.some(l=>l.includes(tag)))return null;
     }
-    return {...x,done:false};
+    return{...x,done:false};
   }).filter(Boolean);
 }
 function dailyReset(){
@@ -1257,18 +1270,28 @@ function initPlanState(){
   if(!S.agendaEvents)S.agendaEvents=[];
   if(!S.customColors)S.customColors={};
   if(!S.agendaSynced)S.agendaSynced={};
+  if(!S.agendaExclusions)S.agendaExclusions={};
 }
 function agendaSyncDay(dateStr){
   if(!S.agendaSynced)S.agendaSynced={};
   if(S.agendaSynced[dateStr])return;
   S.agendaSynced[dateStr]=true;
   const dow=(new Date(dateStr+'T12:00').getDay()+6)%7;
-  (S.weekTemplate[dow]||[]).forEach(ev=>S.agendaEvents.push({...ev,id:'ag-'+Math.random().toString(36).slice(2,8),date:dateStr,fromTmpl:true}));
+  const excl=(S.agendaExclusions||{})[dateStr]||[];
+  (S.weekTemplate[dow]||[]).forEach(ev=>{
+    if(!excl.includes(ev.id))
+      S.agendaEvents.push({...ev,id:'ag-'+Math.random().toString(36).slice(2,8),date:dateStr,fromTmpl:true,tmplId:ev.id});
+  });
 }
 function agendaReSyncDay(dateStr){
-  S.agendaEvents=S.agendaEvents.filter(ev=>!(ev.date===dateStr&&ev.fromTmpl));
+  // Supprimer les events auto-synced NON déplacés manuellement
+  S.agendaEvents=S.agendaEvents.filter(ev=>!(ev.date===dateStr&&ev.fromTmpl&&!ev.manuallyMoved));
   const dow=(new Date(dateStr+'T12:00').getDay()+6)%7;
-  (S.weekTemplate[dow]||[]).forEach(ev=>S.agendaEvents.push({...ev,id:'ag-'+Math.random().toString(36).slice(2,8),date:dateStr,fromTmpl:true}));
+  const excl=(S.agendaExclusions||{})[dateStr]||[];
+  (S.weekTemplate[dow]||[]).forEach(ev=>{
+    if(!excl.includes(ev.id))
+      S.agendaEvents.push({...ev,id:'ag-'+Math.random().toString(36).slice(2,8),date:dateStr,fromTmpl:true,tmplId:ev.id});
+  });
 }
 function fmtH(h){const hrs=Math.floor(h);const m=Math.round((h-hrs)*60);return hrs+'h'+(m?String(m).padStart(2,'0'):'');}
 let planTab='template';
@@ -1414,7 +1437,7 @@ function tgDrop(e,newDayKey){
     if(ev){const dur=ev.endH-ev.startH;S.weekTemplate.forEach(day=>{const i=day.findIndex(e=>e.id===_dgId);if(i>=0)day.splice(i,1);});ev.startH=newSH;ev.endH=newSH+dur;S.weekTemplate[parseInt(newDayKey)].push(ev);}
   } else {
     const ev=S.agendaEvents.find(e=>e.id===_dgId);
-    if(ev){const dur=ev.endH-ev.startH;ev.startH=newSH;ev.endH=newSH+dur;ev.date=newDayKey;}
+    if(ev){const dur=ev.endH-ev.startH;ev.startH=newSH;ev.endH=newSH+dur;ev.date=newDayKey;ev.manuallyMoved=true;}
   }
   _dgId=null;save();
   const _tg=document.querySelector('.tg-outer');
@@ -1474,17 +1497,38 @@ function saveEvModal(){
   if(_emType==='template'){
     if(_emId){const ev=S.weekTemplate.flat().find(e=>e.id===_emId);if(ev){ev.label=label;ev.startH=startH;ev.endH=endH;ev.color=color;}}
     else{S.weekTemplate[_emDayKey].push({id:'wt-'+Math.random().toString(36).slice(2,8),label,startH,endH,color});}
-    for(let i=0;i<14;i++){const d=new Date();d.setDate(d.getDate()+i);const ds=d.toISOString().slice(0,10);if((new Date(ds+'T12:00').getDay()+6)%7===_emDayKey)agendaReSyncDay(ds);}
+    // Re-sync les 60 prochains jours correspondant à ce jour de semaine
+    for(let i=0;i<60;i++){const d=new Date();d.setDate(d.getDate()+i);const ds=d.toISOString().slice(0,10);if((new Date(ds+'T12:00').getDay()+6)%7===_emDayKey)agendaReSyncDay(ds);}
+    dailyReset();
   } else {
-    if(_emId){const ev=S.agendaEvents.find(e=>e.id===_emId);if(ev){ev.label=label;ev.startH=startH;ev.endH=endH;ev.color=color;}}
+    if(_emId){
+      const ev=S.agendaEvents.find(e=>e.id===_emId);
+      if(ev){ev.label=label;ev.startH=startH;ev.endH=endH;ev.color=color;ev.manuallyMoved=true;}
+    }
     else{S.agendaEvents.push({id:'ag-'+Math.random().toString(36).slice(2,8),label,startH,endH,color,date:_emDayKey});}
+    dailyReset();
   }
   save();closeEvModal();renderPlanContent();renderDailyRender();
 }
 function deleteEvModal(){
   if(!_emId)return;
-  if(_emType==='template')S.weekTemplate.forEach(day=>{const i=day.findIndex(e=>e.id===_emId);if(i>=0)day.splice(i,1);});
-  else S.agendaEvents=S.agendaEvents.filter(e=>e.id!==_emId);
+  if(_emType==='template'){
+    S.weekTemplate.forEach(day=>{const i=day.findIndex(e=>e.id===_emId);if(i>=0)day.splice(i,1);});
+    // Re-sync agenda (l'event ne sera plus ajouté)
+    for(let i=0;i<60;i++){const d=new Date();d.setDate(d.getDate()+i);const ds=d.toISOString().slice(0,10);if((new Date(ds+'T12:00').getDay()+6)%7===_emDayKey)agendaReSyncDay(ds);}
+    dailyReset();
+  } else {
+    const ev=S.agendaEvents.find(e=>e.id===_emId);
+    // Si c'est un event venu du template → l'exclure pour ce jour précis (template reste intact)
+    if(ev&&ev.fromTmpl&&ev.tmplId){
+      if(!S.agendaExclusions)S.agendaExclusions={};
+      if(!S.agendaExclusions[ev.date])S.agendaExclusions[ev.date]=[];
+      if(!S.agendaExclusions[ev.date].includes(ev.tmplId))
+        S.agendaExclusions[ev.date].push(ev.tmplId);
+    }
+    S.agendaEvents=S.agendaEvents.filter(e=>e.id!==_emId);
+    dailyReset();
+  }
   save();closeEvModal();renderPlanContent();renderDailyRender();
 }
 function addColor(){
@@ -1876,7 +1920,7 @@ function syncAutoChecks(){
 }
 
 // ═══ INIT ═══
-dailyReset();initFirebase();go(sessionStorage.getItem('activeView')||'home');
+initPlanState();dailyReset();initFirebase();go(sessionStorage.getItem('activeView')||'home');
 setInterval(()=>{dailyReset();r90()},60000);
 </script>
 </body>
