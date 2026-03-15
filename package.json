@@ -1,10 +1,13 @@
 {
-  "name": "overview",
+  "name": "life+",
   "version": "1.0.0",
   "type": "module",
   "main": "claude-workflow.js",
   "scripts": {
-    "start": "node claude-workflow.js"
+    "start": "node claude-workflow.js",
+    "setup": "node api-config.js",
+    "test-api": "node api-test.js",
+    "workflow": "node claude-workflow.js"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.78.0",
