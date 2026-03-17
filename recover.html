@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Life+ — Recovery Tool</title>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#0a0a0f;--surface:#13131f;--border:#1e1e2e;--border2:#2a2a3e;--accent:#c8ee00;--green:#4ade80;--red:#f87171;--orange:#fb923c;--blue:#60a5fa;--muted:rgba(255,255,255,.4);--mono:'Fira Code','SF Mono',monospace}
+body{background:var(--bg);color:#f0f0f5;font-family:var(--mono);font-size:13px;min-height:100vh;padding:24px}
+h1{font-size:20px;font-weight:800;letter-spacing:-.5px;margin-bottom:4px;color:var(--accent)}
+.sub{color:var(--muted);font-size:11px;margin-bottom:24px}
+.section{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px;margin-bottom:16px}
+.section-title{font-size:11px;text-transform:uppercase;letter-spacing:.8px;color:var(--muted);margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.status{display:inline-flex;align-items:center;gap:5px;font-size:10px;padding:3px 10px;border-radius:99px;border:1px solid;font-weight:700}
+.status.ok{color:var(--green);border-color:rgba(74,222,128,.3);background:rgba(74,222,128,.07)}
+.status.err{color:var(--red);border-color:rgba(248,113,113,.3);background:rgba(248,113,113,.07)}
+.status.warn{color:var(--orange);border-color:rgba(251,146,60,.3);background:rgba(251,146,60,.07)}
+.status.load{color:var(--muted);border-color:rgba(255,255,255,.1);background:rgba(255,255,255,.04)}
+.row{display:flex;justify-content:space-between;align-items:baseline;padding:5px 0;border-bottom:1px solid var(--border);font-size:12px}
+.row:last-child{border-bottom:none}
+.row-label{color:var(--muted)}
+.row-val{text-align:right;max-width:60%;word-break:break-all}
+.hit{color:var(--accent);font-weight:700}
+.miss{color:var(--red)}
+.present{color:var(--green)}
+.source-block{border:1px solid var(--border2);border-radius:8px;padding:14px;margin-bottom:10px}
+.source-name{font-size:11px;color:var(--blue);text-transform:uppercase;letter-spacing:.6px;margin-bottom:8px;font-weight:700}
+.date-tags{display:flex;gap:6px;flex-wrap:wrap;margin:6px 0}
+.dtag{padding:3px 10px;border-radius:99px;font-size:10px;font-weight:700;border:1px solid}
+.dtag.found{color:var(--green);border-color:rgba(74,222,128,.3);background:rgba(74,222,128,.07)}
+.dtag.missing{color:var(--red);border-color:rgba(248,113,113,.3);background:rgba(248,113,113,.07)}
+.dtag.neutral{color:var(--muted);border-color:rgba(255,255,255,.1);background:rgba(255,255,255,.04)}
+pre{background:rgba(0,0,0,.4);border:1px solid var(--border);border-radius:8px;padding:14px;font-size:10px;overflow-x:auto;max-height:320px;overflow-y:auto;white-space:pre-wrap;word-break:break-all;line-height:1.6}
+.btn{display:inline-flex;align-items:center;gap:7px;padding:10px 20px;border-radius:8px;border:none;cursor:pointer;font-family:var(--mono);font-size:12px;font-weight:700;transition:all .2s}
+.btn-primary{background:var(--accent);color:#000}
+.btn-primary:hover{filter:brightness(1.1)}
+.btn-ghost{background:rgba(255,255,255,.07);color:#f0f0f5;border:1px solid var(--border2)}
+.btn-ghost:hover{background:rgba(255,255,255,.12)}
+.btn-danger{background:rgba(248,113,113,.1);color:var(--red);border:1px solid rgba(248,113,113,.25)}
+.btn-danger:hover{background:rgba(248,113,113,.18)}
+.btn-row{display:flex;flex-wrap:wrap;gap:10px;margin-top:10px}
+#loader{text-align:center;padding:60px 0;color:var(--muted)}
+.spin{display:inline-block;width:24px;height:24px;border:2px solid var(--border2);border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite;margin-bottom:12px}
+@keyframes spin{to{transform:rotate(360deg)}}
+.restore-log{background:rgba(0,0,0,.4);border:1px solid var(--border);border-radius:8px;padding:14px;font-size:11px;line-height:1.8;max-height:280px;overflow-y:auto;margin-top:12px;display:none}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:700px){.grid2{grid-template-columns:1fr}}
+.badge{display:inline-block;padding:2px 8px;border-radius:4px;font-size:9px;font-weight:700;margin-left:6px}
+.badge-green{background:rgba(74,222,128,.12);color:var(--green)}
+.badge-red{background:rgba(248,113,113,.12);color:var(--red)}
+.sep{border:none;border-top:1px solid var(--border);margin:14px 0}
+</style>
+</head>
+<body>
+
+<h1>⚡ Life+ Recovery Tool</h1>
+<div class="sub">Scan toutes les sources de données · Cible : 2026-03-15, 2026-03-16, 2026-03-17</div>
+
+<div id="loader">
+  <div class="spin"></div><br>
+  Connexion Firebase & scan en cours…
+</div>
+
+<div id="report" style="display:none">
+
+  <!-- FIREBASE STATUS -->
+  <div class="section">
+    <div class="section-title">🔥 Firebase <span id="fb-status-badge" class="status load">…</span></div>
+    <div id="fb-info"></div>
+  </div>
+
+  <!-- SOURCES -->
+  <div class="section">
+    <div class="section-title">📦 Sources de données trouvées</div>
+    <div id="sources-report"></div>
+  </div>
+
+  <!-- CIBLES -->
+  <div class="section">
+    <div class="section-title">🎯 Données cibles — 15/16/17 mars 2026</div>
+    <div id="target-report"></div>
+  </div>
+
+  <!-- ACTIONS -->
+  <div class="section">
+    <div class="section-title">🔧 Actions de restauration</div>
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="doRestore()">🔄 Restaurer les données manquantes</button>
+      <button class="btn btn-ghost" onclick="copyReport()">📋 Copier rapport JSON</button>
+      <button class="btn btn-ghost" onclick="exportAll()">💾 Exporter backup complet</button>
+      <button class="btn btn-ghost" onclick="toggleRaw()">🔥 Voir Firebase brut</button>
+    </div>
+    <div id="restore-log" class="restore-log"></div>
+    <div id="raw-fb" style="display:none;margin-top:12px">
+      <div style="font-size:10px;color:var(--muted);margin-bottom:6px">dashboards/main :</div>
+      <pre id="raw-main">…</pre>
+      <div style="font-size:10px;color:var(--muted);margin:10px 0 6px">backups/main :</div>
+      <pre id="raw-backup">…</pre>
+    </div>
+  </div>
+
+</div>
+
+<script>
+// ═══ CONFIG ═══
+const TARGET_DATES=['2026-03-15','2026-03-16','2026-03-17'];
+const LS_KEY='jtb3';
+const LS_FB_KEY='jtb3_fb';
+const IDB_DB='ov_bak';
+const IDB_STORE='snaps';
+const FB_MAIN_PATH='dashboards/main';
+const FB_BK_PATH='backups/main';
+
+// ═══ STATE GLOBAL ═══
+let G={
+  fbMain:null,
+  fbBackup:null,
+  localState:null,
+  localBackups:{},   // { date: data }
+  idbSnaps:[],       // array of {key, data}
+  fullReport:{},
+  fbRef:null,
+  fbConnected:false
+};
+
+// ═══ UTILS ═══
+function safeJSON(str){try{return JSON.parse(str);}catch(e){return null;}}
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function fmtDate(ts){if(!ts)return '—';try{return new Date(ts).toLocaleString('fr-FR');}catch(e){return ts;}}
+function shortJSON(obj,maxLen=120){const s=JSON.stringify(obj);return s.length>maxLen?s.slice(0,maxLen)+'…':s;}
+
+// ═══ MAIN ═══
+window.addEventListener('DOMContentLoaded',()=>{ runScan(); });
+
+async function runScan(){
+  // 1. Lire state local
+  G.localState=safeJSON(localStorage.getItem(LS_KEY));
+
+  // 2. Lire backups localStorage
+  for(let i=0;i<localStorage.length;i++){
+    const k=localStorage.key(i);
+    if(k&&k.startsWith('jtb3_bk_')){
+      const date=k.replace('jtb3_bk_','');
+      const d=safeJSON(localStorage.getItem(k));
+      if(d)G.localBackups[date]=d;
+    }
+    if(k&&k.startsWith('jtb3_fullbk_')){
+      const date=k.replace('jtb3_fullbk_','');
+      const d=safeJSON(localStorage.getItem(k));
+      if(d)G.localBackups['fullbk_'+date]=d;
+    }
+  }
+
+  // 3. Lire IndexedDB
+  try{
+    G.idbSnaps=await readIDB();
+  }catch(e){console.warn('IDB error:',e);}
+
+  // 4. Firebase
+  const fbCfgRaw=localStorage.getItem(LS_FB_KEY);
+  const fbCfg=safeJSON(fbCfgRaw);
+
+  if(!fbCfg||!fbCfg.apiKey||!fbCfg.databaseURL){
+    document.getElementById('fb-status-badge').outerHTML='<span class="status err">Pas de config Firebase</span>';
+    document.getElementById('fb-info').innerHTML='<div style="color:var(--red);font-size:11px">Config Firebase introuvable dans localStorage("jtb3_fb"). Connexion Firebase impossible.<br>Seules les sources locales seront analysées.</div>';
+    showReport();
+    return;
+  }
+
+  try{
+    if(!firebase.apps.length){firebase.initializeApp(fbCfg);}
+    // Auth anonyme
+    try{
+      await firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL);
+      await firebase.auth().signInAnonymously();
+    }catch(e){/* auth non activée */}
+
+    const db=firebase.database();
+    G.fbRef=db.ref(FB_MAIN_PATH);
+    const bkRef=db.ref(FB_BK_PATH);
+
+    // Lire les deux chemins en parallèle
+    const [mainSnap,bkSnap]=await Promise.all([
+      G.fbRef.once('value'),
+      bkRef.once('value')
+    ]);
+
+    G.fbMain=mainSnap.val();
+    G.fbBackup=bkSnap.val();
+    G.fbConnected=true;
+
+    document.getElementById('fb-status-badge').outerHTML=`<span class="status ok">✓ Connecté · ${fbCfg.databaseURL||''}</span>`;
+    document.getElementById('fb-info').innerHTML=`
+      <div class="row"><span class="row-label">Projet</span><span class="row-val">${esc(fbCfg.projectId||'—')}</span></div>
+      <div class="row"><span class="row-label">databaseURL</span><span class="row-val">${esc(fbCfg.databaseURL||'—')}</span></div>
+      <div class="row"><span class="row-label">dashboards/main</span><span class="row-val">${G.fbMain?'<span class="present">✓ Données trouvées</span>':'<span class="miss">Vide</span>'}</span></div>
+      <div class="row"><span class="row-label">backups/main</span><span class="row-val">${G.fbBackup?'<span class="present">✓ Backup trouvé</span>':'<span class="miss">Vide</span>'}</span></div>
+      <div class="row"><span class="row-label">_ts Firebase main</span><span class="row-val">${G.fbMain?fmtDate(G.fbMain._ts):'—'}</span></div>
+    `;
+
+    // Remplir raw
+    document.getElementById('raw-main').textContent=JSON.stringify(G.fbMain,null,2);
+    document.getElementById('raw-backup').textContent=JSON.stringify(G.fbBackup,null,2);
+
+  }catch(e){
+    document.getElementById('fb-status-badge').outerHTML=`<span class="status err">✗ Erreur</span>`;
+    document.getElementById('fb-info').innerHTML=`<div style="color:var(--red);font-size:11px">Erreur Firebase : ${esc(e.message)}</div>`;
+  }
+
+  showReport();
+}
+
+// ═══ IDB ═══
+function readIDB(){
+  return new Promise((resolve,reject)=>{
+    const req=indexedDB.open(IDB_DB);
+    req.onerror=()=>resolve([]);
+    req.onsuccess=e=>{
+      const db=e.target.result;
+      if(!db.objectStoreNames.contains(IDB_STORE)){resolve([]);return;}
+      const tx=db.transaction(IDB_STORE,'readonly');
+      const store=tx.objectStore(IDB_STORE);
+      const all=store.getAll();
+      all.onsuccess=ev=>{
+        const vals=ev.target.result||[];
+        resolve(vals.map(v=>({key:v.key||v.id||'snap',data:v.data||v})));
+      };
+      all.onerror=()=>resolve([]);
+    };
+    req.onupgradeneeded=()=>resolve([]);
+  });
+}
+
+// ═══ ANALYSE D'UNE SOURCE ═══
+function analyzeSource(name,data){
+  if(!data||typeof data!=='object') return {name,ok:false,ts:null,targetDates:{}};
+
+  const res={name,ok:true,ts:data._ts||null};
+
+  // TodoHistory
+  const th=(data.todoHistory||[]);
+  res.todoHistory=th.map(h=>h.date).filter(Boolean);
+
+  // Revenus
+  res.revenus=(data.revenus||[]).map(r=>r.date).filter(Boolean);
+
+  // Dépenses
+  res.depenses=(data.depenses||[]).map(d=>d.date).filter(Boolean);
+
+  // Séances
+  res.seances=(data.seances||[]).map(s=>s.date).filter(Boolean);
+
+  // Poids
+  res.poids=(data.poids||[]).map(p=>p.date).filter(Boolean);
+
+  // AgendaEvents
+  res.agendaEvents=(data.agendaEvents||[]).map(e=>e.date).filter(Boolean);
+
+  // NutritionChecks
+  res.nutritionChecks=Object.keys(data.nutritionChecks||{});
+
+  // SportChecks
+  res.sportChecks=Object.keys(data.sportChecks||{});
+
+  // Prospects
+  res.prospects=Object.keys(data.prospects||{});
+
+  // WeekTemplate
+  const wt=data.weekTemplate||[];
+  res.weekTemplateTotal=wt.reduce((s,d)=>s+(Array.isArray(d)?d.length:0),0);
+
+  // Pour chaque date cible
+  res.targetDates={};
+  TARGET_DATES.forEach(d=>{
+    res.targetDates[d]={
+      todoHistory:res.todoHistory.includes(d),
+      revenus:res.revenus.filter(x=>x===d).length,
+      depenses:res.depenses.filter(x=>x===d).length,
+      seances:res.seances.filter(x=>x===d).length,
+      poids:res.poids.filter(x=>x===d).length,
+      agendaEvents:res.agendaEvents.filter(x=>x===d).length,
+      nutritionChecks:res.nutritionChecks.includes(d),
+      sportChecks:res.sportChecks.includes(d),
+      prospects:res.prospects.includes(d),
+    };
+  });
+
+  return res;
+}
+
+// ═══ RENDER REPORT ═══
+function showReport(){
+  document.getElementById('loader').style.display='none';
+  document.getElementById('report').style.display='block';
+
+  // Construire la liste des sources
+  const sources=[];
+
+  if(G.localState) sources.push({id:'local',label:'localStorage — jtb3 (state actuel)',data:G.localState});
+  if(G.fbMain) sources.push({id:'fb-main',label:'Firebase — dashboards/main',data:G.fbMain});
+  if(G.fbBackup) sources.push({id:'fb-backup',label:'Firebase — backups/main',data:G.fbBackup});
+
+  Object.entries(G.localBackups).forEach(([date,d])=>{
+    sources.push({id:'lsbk-'+date,label:`localStorage backup — ${date}`,data:d.data||d});
+  });
+
+  G.idbSnaps.forEach((snap,i)=>{
+    sources.push({id:'idb-'+i,label:`IndexedDB snap ${i+1} (${snap.key||'?'})`,data:snap.data});
+  });
+
+  G.fullReport.sources=sources.map(s=>({...s,analysis:analyzeSource(s.label,s.data)}));
+
+  // Render sources
+  const srcEl=document.getElementById('sources-report');
+  if(!sources.length){
+    srcEl.innerHTML='<div style="color:var(--red)">Aucune source trouvée.</div>';
+  } else {
+    srcEl.innerHTML=sources.map(s=>{
+      const a=analyzeSource(s.label,s.data);
+      const ts=a.ts?fmtDate(a.ts):'—';
+      const wt=a.weekTemplateTotal||0;
+      return `<div class="source-block">
+        <div class="source-name">${esc(s.label)}</div>
+        <div class="row"><span class="row-label">Timestamp</span><span class="row-val">${ts}</span></div>
+        <div class="row"><span class="row-label">TodoHistory</span><span class="row-val">${a.todoHistory.length} jours</span></div>
+        <div class="row"><span class="row-label">Revenus</span><span class="row-val">${a.revenus.length} entrées</span></div>
+        <div class="row"><span class="row-label">Dépenses</span><span class="row-val">${a.depenses.length} entrées</span></div>
+        <div class="row"><span class="row-label">Séances</span><span class="row-val">${a.seances.length} entrées</span></div>
+        <div class="row"><span class="row-label">Poids</span><span class="row-val">${a.poids.length} entrées</span></div>
+        <div class="row"><span class="row-label">AgendaEvents</span><span class="row-val">${a.agendaEvents.length} entrées</span></div>
+        <div class="row"><span class="row-label">NutritionChecks</span><span class="row-val">${a.nutritionChecks.length} dates</span></div>
+        <div class="row"><span class="row-label">SportChecks</span><span class="row-val">${a.sportChecks.length} dates</span></div>
+        <div class="row"><span class="row-label">WeekTemplate total events</span><span class="row-val">${wt}</span></div>
+        <div style="margin-top:10px;font-size:10px;color:var(--muted);margin-bottom:4px">Données 15/16/17 mars :</div>
+        <div class="date-tags">${TARGET_DATES.map(d=>{
+          const td=a.targetDates[d]||{};
+          const hasAny=td.todoHistory||td.revenus||td.depenses||td.seances||td.poids||td.agendaEvents||td.nutritionChecks||td.sportChecks||td.prospects;
+          return `<span class="dtag ${hasAny?'found':'missing'}">${d.slice(5)} ${hasAny?'✓':'✗'}</span>`;
+        }).join('')}</div>
+      </div>`;
+    }).join('');
+  }
+
+  // Render cibles
+  const tgtEl=document.getElementById('target-report');
+  const fields=['todoHistory','revenus','depenses','seances','poids','agendaEvents','nutritionChecks','sportChecks','prospects'];
+  const fieldLabels={todoHistory:'TodoHistory',revenus:'Revenus',depenses:'Dépenses',seances:'Séances',poids:'Poids',agendaEvents:'AgendaEvents',nutritionChecks:'NutritionChecks',sportChecks:'SportChecks',prospects:'Prospects'};
+
+  let tgtHtml='';
+  TARGET_DATES.forEach(d=>{
+    const D=['Dim','Lun','Mar','Mer','Jeu','Ven','Sam'];
+    const dayName=D[new Date(d+'T12:00').getDay()];
+    tgtHtml+=`<div style="margin-bottom:16px"><div style="font-size:13px;font-weight:700;margin-bottom:8px;color:var(--accent)">${dayName} ${d}</div>`;
+    fields.forEach(f=>{
+      const label=fieldLabels[f];
+      // Chercher dans toutes les sources
+      const found=[];
+      sources.forEach(s=>{
+        const a=analyzeSource(s.label,s.data);
+        const v=a.targetDates[d]?.[f];
+        if(v&&(v===true||v>0)) found.push(s.label.split(' — ')[0].split(' ')[0]);
+      });
+      const ok=found.length>0;
+      tgtHtml+=`<div class="row"><span class="row-label">${label}</span><span class="row-val ${ok?'present':'miss'}">${ok?'✓ trouvé dans '+found.join(', '):'✗ ABSENT'}</span></div>`;
+    });
+    tgtHtml+='</div><hr class="sep">';
+  });
+  tgtEl.innerHTML=tgtHtml;
+}
+
+// ═══ RESTAURATION ═══
+function doRestore(){
+  const log=document.getElementById('restore-log');
+  log.style.display='block';
+  log.innerHTML='<span style="color:var(--accent)">⟳ Restauration en cours…</span>\n';
+
+  const current=safeJSON(localStorage.getItem(LS_KEY));
+  if(!current){log.innerHTML+='<span style="color:var(--red)">✗ Pas de state local (jtb3). Impossible de merger.</span>';return;}
+
+  let restored=JSON.parse(JSON.stringify(current));
+  let changes=[];
+
+  // Toutes les sources à scanner
+  const allSources=[G.fbMain,G.fbBackup,...Object.values(G.localBackups).map(d=>d.data||d),...G.idbSnaps.map(s=>s.data)].filter(Boolean);
+
+  // Helper : merge array sans doublons (par JSON.stringify)
+  function mergeArray(dest,src,label){
+    if(!Array.isArray(src)||!src.length)return 0;
+    let added=0;
+    src.forEach(item=>{
+      const isTarget=TARGET_DATES.some(d=>item.date===d||(item.date&&item.date.startsWith(d)));
+      if(!isTarget)return;
+      const dup=dest.some(m=>JSON.stringify(m)===JSON.stringify(item));
+      if(!dup){dest.push(item);added++;}
+    });
+    if(added>0)changes.push(`${label}: +${added} entrée(s) restaurée(s)`);
+    return added;
+  }
+
+  // Helper : merge todoHistory
+  function mergeTodoHistory(dest,src){
+    if(!Array.isArray(src))return 0;
+    let added=0;
+    src.forEach(h=>{
+      if(!TARGET_DATES.includes(h.date))return;
+      if(!dest.find(x=>x.date===h.date)){
+        dest.push(h);added++;
+        changes.push(`TodoHistory: jour ${h.date} restauré (${h.done||0}/${h.total||0})`);
+      }
+    });
+    return added;
+  }
+
+  // Helper : merge object keys
+  function mergeObj(dest,src,label){
+    if(!src||typeof src!=='object')return 0;
+    let added=0;
+    TARGET_DATES.forEach(d=>{
+      if(src[d]!==undefined&&dest[d]===undefined){
+        dest[d]=src[d];added++;
+        changes.push(`${label}[${d}]: restauré`);
+      } else if(src[d]!==undefined&&dest[d]!==undefined&&typeof src[d]==='object'){
+        const merged={...src[d],...dest[d]};
+        if(JSON.stringify(merged)!==JSON.stringify(dest[d])){
+          dest[d]=merged;added++;
+          changes.push(`${label}[${d}]: mergé`);
+        }
+      }
+    });
+    return added;
+  }
+
+  // Assurer arrays
+  if(!Array.isArray(restored.todoHistory))restored.todoHistory=[];
+  if(!Array.isArray(restored.revenus))restored.revenus=[];
+  if(!Array.isArray(restored.depenses))restored.depenses=[];
+  if(!Array.isArray(restored.seances))restored.seances=[];
+  if(!Array.isArray(restored.poids))restored.poids=[];
+  if(!Array.isArray(restored.agendaEvents))restored.agendaEvents=[];
+  if(!restored.nutritionChecks)restored.nutritionChecks={};
+  if(!restored.sportChecks)restored.sportChecks={};
+  if(!restored.prospects)restored.prospects={};
+
+  // Parcourir toutes les sources
+  allSources.forEach((src,i)=>{
+    if(!src||typeof src!=='object')return;
+    mergeTodoHistory(restored.todoHistory,src.todoHistory);
+    mergeArray(restored.revenus,src.revenus,'Revenus');
+    mergeArray(restored.depenses,src.depenses,'Dépenses');
+    mergeArray(restored.seances,src.seances,'Séances');
+    mergeArray(restored.poids,src.poids,'Poids');
+    mergeArray(restored.agendaEvents,src.agendaEvents,'AgendaEvents');
+    mergeObj(restored.nutritionChecks,src.nutritionChecks,'NutritionChecks');
+    mergeObj(restored.sportChecks,src.sportChecks,'SportChecks');
+    mergeObj(restored.prospects,src.prospects,'Prospects');
+
+    // weekTemplate : prendre la version la plus complète
+    if(src.weekTemplate&&Array.isArray(src.weekTemplate)){
+      const srcTotal=src.weekTemplate.reduce((s,d)=>s+(Array.isArray(d)?d.length:0),0);
+      const curTotal=(restored.weekTemplate||[]).reduce((s,d)=>s+(Array.isArray(d)?d.length:0),0);
+      if(srcTotal>curTotal){
+        restored.weekTemplate=src.weekTemplate;
+        changes.push(`WeekTemplate: remplacé par version plus complète (${srcTotal} events vs ${curTotal})`);
+      }
+    }
+  });
+
+  if(changes.length===0){
+    log.innerHTML+='<span style="color:var(--orange)">⚠ Aucune donnée supplémentaire trouvée à restaurer.<br>Les données du 15/16/17 mars semblent absentes de toutes les sources.</span>\n';
+    return;
+  }
+
+  // Sauvegarder
+  restored._ts=Date.now();
+  try{
+    localStorage.setItem(LS_KEY,JSON.stringify(restored));
+    log.innerHTML+='<span style="color:var(--green)">✓ localStorage(jtb3) mis à jour</span>\n';
+  }catch(e){
+    log.innerHTML+='<span style="color:var(--red)">✗ Erreur localStorage : '+esc(e.message)+'</span>\n';
+  }
+
+  // Push Firebase
+  if(G.fbConnected&&G.fbRef){
+    G.fbRef.set(restored)
+      .then(()=>log.innerHTML+='<span style="color:var(--green)">✓ Firebase dashboards/main mis à jour</span>\n')
+      .catch(e=>log.innerHTML+='<span style="color:var(--red)">✗ Erreur Firebase push : '+esc(e.message)+'</span>\n');
+  } else {
+    log.innerHTML+='<span style="color:var(--orange)">⚠ Firebase non connecté — push ignoré</span>\n';
+  }
+
+  log.innerHTML+='<br><span style="color:var(--accent)">📋 Résumé :</span>\n';
+  changes.forEach(c=>log.innerHTML+='  <span style="color:var(--green)">+ </span>'+esc(c)+'\n');
+  log.innerHTML+=`\n<span style="color:var(--blue)">${changes.length} modification(s) appliquée(s).</span>\n`;
+  log.innerHTML+='<br><span style="color:var(--muted)">Rechargez le dashboard pour voir les données restaurées.</span>';
+
+  log.scrollTop=log.scrollHeight;
+}
+
+// ═══ COPIER RAPPORT ═══
+function copyReport(){
+  const report={
+    timestamp:new Date().toISOString(),
+    targetDates:TARGET_DATES,
+    sources:G.fullReport.sources?.map(s=>({
+      id:s.id,label:s.label,
+      ts:s.analysis?.ts,
+      targetDates:s.analysis?.targetDates
+    }))||[],
+    fbMain:G.fbMain,
+    fbBackup:G.fbBackup,
+    localState:G.localState,
+    localBackups:G.localBackups,
+    idbSnaps:G.idbSnaps
+  };
+  navigator.clipboard.writeText(JSON.stringify(report,null,2))
+    .then(()=>alert('✓ Rapport copié dans le presse-papier'))
+    .catch(()=>{
+      const ta=document.createElement('textarea');
+      ta.value=JSON.stringify(report,null,2);
+      document.body.appendChild(ta);ta.select();
+      document.execCommand('copy');document.body.removeChild(ta);
+      alert('✓ Rapport copié');
+    });
+}
+
+// ═══ EXPORT ═══
+function exportAll(){
+  const all={
+    timestamp:new Date().toISOString(),
+    fbMain:G.fbMain,
+    fbBackup:G.fbBackup,
+    localState:G.localState,
+    localBackups:G.localBackups,
+    idbSnaps:G.idbSnaps
+  };
+  const blob=new Blob([JSON.stringify(all,null,2)],{type:'application/json'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url;a.download='life-plus-recovery-'+new Date().toISOString().slice(0,10)+'.json';
+  a.click();URL.revokeObjectURL(url);
+}
+
+// ═══ TOGGLE RAW ═══
+function toggleRaw(){
+  const el=document.getElementById('raw-fb');
+  el.style.display=el.style.display==='none'?'block':'none';
+}
+</script>
+</body>
+</html>
