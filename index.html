@@ -416,7 +416,7 @@ hr{border:none;border-top:1px solid var(--border);margin:16px 0}
 <div class="sidebar" id="sidebar">
   <div class="brand">
     <div class="brand-mark"><div class="brand-dot"></div><span class="brand-name">Life+</span></div>
-    <div class="brand-sub">Dashboard · Défi 90J · <span id="sync-dot-d" style="transition:opacity .3s;opacity:.4">sync —</span></div>
+    <div class="brand-sub">Dashboard · Défi 90J · <span id="sync-dot-d" style="transition:opacity .3s;opacity:.4">sync —</span><br><span id="last-save" style="opacity:.5"></span></div>
   </div>
   <nav class="nav">
     <button class="nav-item active" onclick="go('home',this)"><span class="nav-icon">⚡</span>Vue d'ensemble</button>
@@ -613,6 +613,12 @@ hr{border:none;border-top:1px solid var(--border);margin:16px 0}
       <div class="ph-title">Checklist</div>
       <div class="ph-sub">Reset automatique à minuit · <span id="td-date"></span></div>
     </div>
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap">
+      <input type="date" id="todo-date-picker" onchange="switchTodoDate(this.value)"
+        style="background:var(--glass2);border:1px solid var(--border);border-radius:8px;padding:7px 12px;color:var(--text);font-family:var(--mono);font-size:12px">
+      <span id="todo-date-label" style="font-family:var(--mono);font-size:11px;color:var(--muted)">Aujourd'hui</span>
+      <button class="btn btn-ghost btn-sm" onclick="switchTodoDate(td())" id="todo-today-btn" style="display:none">↩ Aujourd'hui</button>
+    </div>
     <div class="card gap">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
         <div class="card-title" style="margin:0">Routine du jour</div>
@@ -685,6 +691,7 @@ hr{border:none;border-top:1px solid var(--border);margin:16px 0}
         <div class="irow">
           <input type="text" id="inp-rev-label" placeholder="Client">
           <input type="number" id="inp-rev-val" placeholder="€" style="max-width:80px">
+          <input type="date" id="inp-rev-date" style="max-width:130px">
           <button class="btn btn-sm" onclick="addRevenu()">+</button>
         </div>
         <div class="slabel">Historique revenus</div>
@@ -695,6 +702,7 @@ hr{border:none;border-top:1px solid var(--border);margin:16px 0}
         <div class="irow">
           <input type="text" id="inp-dep-l" placeholder="Label">
           <input type="number" id="inp-dep-v" placeholder="€" style="max-width:80px">
+          <input type="date" id="inp-dep-date" style="max-width:130px">
           <button class="btn btn-sm" onclick="addDep()">+</button>
         </div>
         <div class="slabel">Historique dépenses</div>
@@ -754,6 +762,7 @@ hr{border:none;border-top:1px solid var(--border);margin:16px 0}
         <div class="card-sub">kg · Obj : <span id="c-poids-obj">—</span>kg</div>
         <div class="irow">
           <input type="number" id="inp-poids" placeholder="kg" step="0.1">
+          <input type="date" id="inp-poids-date" style="max-width:130px">
           <button class="btn btn-sm" onclick="logPoids()">Log</button>
         </div>
       </div>
@@ -765,7 +774,13 @@ hr{border:none;border-top:1px solid var(--border);margin:16px 0}
       </div>
     </div>
     <div class="slabel">Logger une séance</div>
-    <div class="card gap" id="seance-btns-wrap" style="display:flex;flex-wrap:wrap;gap:8px"></div>
+    <div class="card gap">
+      <div class="irow" style="margin-bottom:8px">
+        <label style="font-family:var(--mono);font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;white-space:nowrap;flex-shrink:0">Date :</label>
+        <input type="date" id="inp-seance-date" style="max-width:150px">
+      </div>
+      <div id="seance-btns-wrap" style="display:flex;flex-wrap:wrap;gap:8px"></div>
+    </div>
     <div class="g2">
       <div class="card">
         <div class="card-title">Historique poids</div>
@@ -953,6 +968,31 @@ function initFirebase(){
   }catch(e){console.error('Firebase init error:',e)}
 }
 
+function safeMerge(local,remote){
+  const arrayKeys=['revenus','depenses','seances','poids','agendaEvents','todoHistory'];
+  arrayKeys.forEach(key=>{
+    if(Array.isArray(remote[key])&&Array.isArray(local[key])){
+      const merged=[...local[key]];
+      remote[key].forEach(item=>{
+        const isDuplicate=merged.some(m=>JSON.stringify(m)===JSON.stringify(item));
+        if(!isDuplicate)merged.push(item);
+      });
+      remote[key]=merged;
+    } else if(!remote[key]&&Array.isArray(local[key])){
+      remote[key]=local[key];
+    }
+  });
+  const objKeys=['prospects','nutritionChecks','sportChecks','agendaSynced','agendaExclusions'];
+  objKeys.forEach(key=>{
+    if(remote[key]&&local[key]&&typeof remote[key]==='object'&&typeof local[key]==='object'){
+      remote[key]={...local[key],...remote[key]};
+    } else if(!remote[key]&&local[key]){
+      remote[key]=local[key];
+    }
+  });
+  Object.assign(local,remote);
+}
+
 function _connectDB(){
   try{
     fbRef=firebase.database().ref('dashboards/main');
@@ -968,10 +1008,10 @@ function _connectDB(){
           if(S._ts>0){ignoreNext=true;S._ts=Date.now();fbRef.set(S);showSync('↑');}
           return;
         }
-        // Firebase a des données : prendre Firebase si égal ou plus récent
+        // Firebase a des données : merger intelligemment sans jamais écraser
         if(!S._ts||remote._ts>=S._ts){
-          Object.assign(S,remote);
-          localStorage.setItem('jtb3',JSON.stringify(S));
+          safeMerge(S,remote);
+          try{localStorage.setItem('jtb3',JSON.stringify(S));}catch(e){}
           dailyReset();reRenderActive();showSync('↓');
         } else {
           // Local plus récent → push vers Firebase
@@ -982,8 +1022,8 @@ function _connectDB(){
       // Lectures suivantes : merge classique
       if(!remote)return;
       if(remote._ts&&(!S._ts||remote._ts>S._ts)){
-        Object.assign(S,remote);
-        localStorage.setItem('jtb3',JSON.stringify(S));
+        safeMerge(S,remote);
+        try{localStorage.setItem('jtb3',JSON.stringify(S));}catch(e){}
         dailyReset();reRenderActive();showSync('↓');
       }
     });
@@ -1027,11 +1067,21 @@ let S=JSON.parse(localStorage.getItem('jtb3')||'null')||{
 };
 const save=()=>{
   S._ts=Date.now();
-  localStorage.setItem('jtb3',JSON.stringify(S));
+  try{
+    localStorage.setItem('jtb3',JSON.stringify(S));
+  }catch(e){
+    console.error('localStorage save failed:',e);
+    alert('⚠️ Erreur de sauvegarde ! Espace insuffisant. Exporte tes données depuis Config.');
+  }
   if(fbReady&&fbRef){ignoreNext=true;fbRef.set(S);showSync('↑')}
   _idbSave(S);
   scheduleFirebaseBackup();
+  showLastSave();
 };
+function showLastSave(){
+  const el=document.getElementById('last-save');
+  if(el)el.textContent='Save: '+new Date().toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'});
+}
 const td=()=>new Date().toISOString().slice(0,10);
 const tm=()=>td().slice(0,7);
 
@@ -1094,6 +1144,8 @@ function dailyReset(){
         if(S.todoHistory.length>90)S.todoHistory=S.todoHistory.slice(-90);
       }
     }
+    // Full backup quotidien avant reset
+    try{localStorage.setItem('jtb3_fullbk_'+S.checkDate,JSON.stringify(S));}catch(e){}
     S.checkDate=t;S.todos=buildTodosForDay(base,t);save();
   } else if(!S.todos||!S.todos.length){
     // Seulement si vide — évite le rebuild toutes les 60s
@@ -1407,12 +1459,57 @@ function _ciHtml(t,i,list){
     </div>
   </div>`;
 }
+let _todoViewDate=null;
+function switchTodoDate(dateStr){
+  const today=td();
+  _todoViewDate=(dateStr===today)?null:dateStr;
+  const btnToday=document.getElementById('todo-today-btn');
+  const label=document.getElementById('todo-date-label');
+  if(btnToday)btnToday.style.display=_todoViewDate?'inline-block':'none';
+  if(label){
+    if(!_todoViewDate)label.textContent='Aujourd\'hui';
+    else{const d=new Date(dateStr+'T12:00');const D=['Dim','Lun','Mar','Mer','Jeu','Ven','Sam'];label.textContent=D[d.getDay()]+' '+dateStr.slice(8)+'/'+String(d.getMonth()+1).padStart(2,'0');}
+  }
+  renderTodo();
+}
+function toggleRetroItem(date,idx){
+  if(!S.todoHistory)return;
+  const h=S.todoHistory.find(x=>x.date===date);
+  if(!h||!h.items)return;
+  h.items[idx].done=!h.items[idx].done;
+  h.done=h.items.filter(x=>x.done).length;
+  save();renderTodo();renderPastDaysContent();renderHistory();
+}
 function renderTodo(){
   document.getElementById('td-date').textContent=td();
-  document.getElementById('td-list').innerHTML=S.todos.map((t,i)=>_ciHtml(t,i,'todos')).join('');
-  const done=S.todos.filter(t=>t.done).length;
-  document.getElementById('td-score').textContent=`${done}/${S.todos.length} — ${Math.round(done/S.todos.length*100)||0}%`;
-  document.getElementById('td-extra').innerHTML=S.extraTodos.map((t,i)=>_ciHtml(t,i,'extra')).join('');
+  const picker=document.getElementById('todo-date-picker');
+  if(picker){picker.max=td();if(!_todoViewDate)picker.value=td();}
+  if(_todoViewDate){
+    const h=S.todoHistory&&S.todoHistory.find(x=>x.date===_todoViewDate);
+    if(!h){
+      // Créer une entrée pour ce jour avec la routine de base
+      const base=getBaseRoutine();
+      const items=base.map(x=>({id:x.id,label:x.label,cat:x.cat,done:false}));
+      if(!S.todoHistory)S.todoHistory=[];
+      S.todoHistory.push({date:_todoViewDate,done:0,total:items.length,lifeScore:0,items});
+      save();renderTodo();return;
+    }
+    const items=h.items||[];
+    document.getElementById('td-list').innerHTML=items.map((t,i)=>`
+      <div class="ci ${t.done?'done':''}" onclick="toggleRetroItem('${_todoViewDate}',${i})" style="cursor:pointer">
+        <div class="ci-box"></div>
+        <span class="ci-label">${t.label}</span>
+        <span class="ci-cat">${t.cat||''}</span>
+      </div>`).join('');
+    const done=items.filter(t=>t.done).length;
+    document.getElementById('td-score').textContent=`${done}/${items.length} — ${Math.round(done/items.length*100)||0}% (rétro)`;
+    document.getElementById('td-extra').innerHTML='<div style="color:var(--muted);font-size:11px;font-style:italic;padding:8px 0">Mode rétroactif — tâches business non affichées</div>';
+  } else {
+    document.getElementById('td-list').innerHTML=S.todos.map((t,i)=>_ciHtml(t,i,'todos')).join('');
+    const done=S.todos.filter(t=>t.done).length;
+    document.getElementById('td-score').textContent=`${done}/${S.todos.length} — ${Math.round(done/S.todos.length*100)||0}%`;
+    document.getElementById('td-extra').innerHTML=S.extraTodos.map((t,i)=>_ciHtml(t,i,'extra')).join('');
+  }
 }
 function toggleTodo(i,mini){S.todos[i].done=!S.todos[i].done;save();if(mini){renderMiniTodos();renderTodoGauge();renderHistory()}else{renderTodo();renderMiniTodos();renderTodoGauge();renderHistory()}}
 function toggleExtra(i){S.extraTodos[i].done=!S.extraTodos[i].done;save();renderTodo()}
@@ -1475,6 +1572,8 @@ function renderBiz(){
   document.getElementById('biz-clients').textContent=S.clients;
   document.getElementById('biz-pt').textContent=S.prospects[td()]||0;
   document.getElementById('inp-rev-obj').value=S.revObj||'';
+  const revDate=document.getElementById('inp-rev-date');if(revDate&&!revDate.value)revDate.value=td();
+  const depDate=document.getElementById('inp-dep-date');if(depDate&&!depDate.value)depDate.value=td();
   const solde=rm-dep;const soldeEl=document.getElementById('b-solde');soldeEl.textContent=solde.toFixed(2)+'€';soldeEl.className='card-big '+(solde>0?'c-green':solde<0?'c-red':'c-muted');
   document.getElementById('b-api').textContent=api.toFixed(2)+'€';
   document.getElementById('rev-log').innerHTML=[...S.revenus].reverse().slice(0,10).map((r,i)=>`
@@ -1497,7 +1596,9 @@ function renderBiz(){
 function addRevenu(){
   const l=document.getElementById('inp-rev-label').value.trim()||'Client';
   const v=parseFloat(document.getElementById('inp-rev-val').value);if(!v)return;
-  S.revenus.push({date:td(),val:v,label:l});
+  const dateEl=document.getElementById('inp-rev-date');
+  const date=(dateEl&&dateEl.value)||td();
+  S.revenus.push({date,val:v,label:l});
   document.getElementById('inp-rev-label').value='';document.getElementById('inp-rev-val').value='';save();renderBiz();
 }
 function delRev(i){S.revenus.splice(i,1);save();renderBiz()}
@@ -1820,6 +1921,8 @@ function renderCorps(){
   const lp=S.poids[S.poids.length-1];
   document.getElementById('c-poids').textContent=lp?lp.val:'—';
   document.getElementById('c-poids-obj').textContent=S.poidsObj;
+  const poidsDate=document.getElementById('inp-poids-date');if(poidsDate&&!poidsDate.value)poidsDate.value=td();
+  const seanceDate=document.getElementById('inp-seance-date');if(seanceDate&&!seanceDate.value)seanceDate.value=td();
   const sw=S.seances.filter(s=>s.date>=getMon()).length;
   document.getElementById('c-seances').textContent=sw;
   document.getElementById('c-seance-p').style.width=Math.min(100,sw/5*100)+'%';
@@ -1834,13 +1937,25 @@ function renderCorps(){
   const pd=S.poids.slice(-14);
   requestAnimationFrame(()=>{const c=document.getElementById('ch-poids');if(!c)return;chPoids=new Chart(c,{type:'line',data:{labels:pd.map(p=>p.date.slice(5)),datasets:[{data:pd.map(p=>p.val),borderColor:'var(--accent)',backgroundColor:'rgba(212,255,0,.04)',borderWidth:2,pointRadius:3,pointBackgroundColor:'var(--accent)',tension:.4,fill:true}]},options:co()});});
 }
-function logPoids(){const v=parseFloat(document.getElementById('inp-poids').value);if(!v)return;S.poids.push({date:td(),val:v});document.getElementById('inp-poids').value='';save();renderCorps()}
-function logSeance(type){S.seances.push({date:td(),type});save();renderCorps()}
+function logPoids(){
+  const v=parseFloat(document.getElementById('inp-poids').value);if(!v)return;
+  const dateEl=document.getElementById('inp-poids-date');
+  const date=(dateEl&&dateEl.value)||td();
+  S.poids.push({date,val:v});document.getElementById('inp-poids').value='';save();renderCorps();
+}
+function logSeance(type){
+  const dateEl=document.getElementById('inp-seance-date');
+  const date=(dateEl&&dateEl.value)||td();
+  S.seances.push({date,type});save();renderCorps();
+}
 function delSeance(i){S.seances.splice(i,1);save();renderCorps()}
 
 function addDep(){
   const l=document.getElementById('inp-dep-l').value.trim();const v=parseFloat(document.getElementById('inp-dep-v').value);
-  if(!l||!v)return;S.depenses.push({date:td(),val:v,label:l});
+  if(!l||!v)return;
+  const dateEl=document.getElementById('inp-dep-date');
+  const date=(dateEl&&dateEl.value)||td();
+  S.depenses.push({date,val:v,label:l});
   document.getElementById('inp-dep-l').value='';document.getElementById('inp-dep-v').value='';save();renderBiz();
 }
 function delDep(i){S.depenses.splice(i,1);save();renderBiz()}
@@ -2234,6 +2349,7 @@ initPlanState();dailyReset();initFirebase();
 go(sessionStorage.getItem('activeView')||'home');
 updateAppearanceUI();
 setInterval(()=>{dailyReset();r90()},60000);
+setInterval(()=>{save();},30000);
 </script>
 </body>
 </html>

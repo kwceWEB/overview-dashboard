@@ -1,0 +1,2296 @@
+{
+  "start90": "2026-03-13",
+  "poidsObj": 70,
+  "revObj": 2000,
+  "revenus": [
+    {
+      "date": "2026-03-13",
+      "label": "Sandrine",
+      "val": 15
+    },
+    {
+      "date": "2026-03-13",
+      "label": "Bitstack",
+      "val": 15
+    },
+    {
+      "date": "2026-03-13",
+      "label": "N",
+      "val": 2
+    },
+    {
+      "date": "2026-03-14",
+      "label": "Joelle",
+      "val": 15
+    }
+  ],
+  "depenses": [
+    {
+      "date": "2026-03-13",
+      "label": "Claude",
+      "val": 20
+    },
+    {
+      "date": "2026-03-13",
+      "label": "Api claude",
+      "val": 6
+    },
+    {
+      "date": "2026-03-13",
+      "label": "Api openAI",
+      "val": 6
+    }
+  ],
+  "seances": [
+    {
+      "date": "2026-03-13",
+      "type": "Circuit"
+    },
+    {
+      "date": "2026-03-14",
+      "type": "Pump"
+    }
+  ],
+  "poids": [
+    {
+      "date": "2026-03-15",
+      "val": 71
+    }
+  ],
+  "todos": [
+    {
+      "cat": "mental",
+      "done": false,
+      "id": "t2",
+      "label": "Méditation 30 min"
+    },
+    {
+      "cat": "business",
+      "done": false,
+      "id": "t3",
+      "label": "Prospecter 20 entreprises"
+    },
+    {
+      "cat": "corps",
+      "done": true,
+      "id": "t7",
+      "label": "2L eau minimum"
+    },
+    {
+      "cat": "mental",
+      "done": true,
+      "id": "t9",
+      "label": "Lecture 30 min"
+    },
+    {
+      "cat": "corps",
+      "done": true,
+      "id": "t8",
+      "label": "Lumière du jour 15 min"
+    },
+    {
+      "cat": "mental",
+      "done": false,
+      "id": "t10",
+      "label": "Couché avant -23H"
+    },
+    {
+      "cat": "discipline",
+      "done": true,
+      "id": "t11",
+      "label": "No fap"
+    },
+    {
+      "cat": "discipline",
+      "done": true,
+      "id": "t12",
+      "label": "No Sofia"
+    },
+    {
+      "cat": "discipline",
+      "done": false,
+      "id": "t13",
+      "label": "No doomscroll"
+    },
+    {
+      "cat": "discipline",
+      "done": false,
+      "id": "t19",
+      "label": "No smoke"
+    },
+    {
+      "cat": "corps",
+      "done": true,
+      "id": "t14",
+      "label": "Créatine"
+    },
+    {
+      "cat": "corps",
+      "done": true,
+      "id": "t15",
+      "label": "Whey"
+    },
+    {
+      "cat": "corps",
+      "done": false,
+      "id": "t16",
+      "label": "Oméga 3"
+    },
+    {
+      "cat": "sport",
+      "done": true,
+      "id": "t17",
+      "label": "Sport du jour ✓"
+    },
+    {
+      "cat": "nutrition",
+      "done": true,
+      "id": "t18",
+      "label": "Nutrition complète ✓"
+    }
+  ],
+  "extraTodos": [
+    {
+      "done": true,
+      "id": "e1773428027978",
+      "label": "URSSAF"
+    },
+    {
+      "cat": "business",
+      "done": true,
+      "id": "e1773487280846",
+      "label": "JOELLE"
+    }
+  ],
+  "prospects": {},
+  "clients": 0,
+  "checkDate": "2026-03-15",
+  "_ts": 1773609467953,
+  "todoHistory": [
+    {
+      "date": "2026-03-13",
+      "done": 16,
+      "total": 19
+    },
+    {
+      "date": "2026-03-14",
+      "done": 11,
+      "items": [
+        {
+          "cat": "mental",
+          "done": true,
+          "id": "t2",
+          "label": "Méditation 30 min"
+        },
+        {
+          "cat": "business",
+          "done": false,
+          "id": "t3",
+          "label": "Prospecter 20 entreprises"
+        },
+        {
+          "cat": "corps",
+          "done": true,
+          "id": "t7",
+          "label": "2L eau minimum"
+        },
+        {
+          "cat": "mental",
+          "done": false,
+          "id": "t9",
+          "label": "Lecture 30 min"
+        },
+        {
+          "cat": "corps",
+          "done": true,
+          "id": "t8",
+          "label": "Lumière du jour 15 min"
+        },
+        {
+          "cat": "mental",
+          "done": false,
+          "id": "t10",
+          "label": "Couché avant 0h45"
+        },
+        {
+          "cat": "discipline",
+          "done": true,
+          "id": "t11",
+          "label": "No fap"
+        },
+        {
+          "cat": "discipline",
+          "done": false,
+          "id": "t12",
+          "label": "No Sofia"
+        },
+        {
+          "cat": "discipline",
+          "done": true,
+          "id": "t13",
+          "label": "No doomscroll"
+        },
+        {
+          "cat": "discipline",
+          "done": true,
+          "id": "t19",
+          "label": "No smoke"
+        },
+        {
+          "cat": "corps",
+          "done": true,
+          "id": "t14",
+          "label": "Créatine"
+        },
+        {
+          "cat": "corps",
+          "done": true,
+          "id": "t15",
+          "label": "Whey"
+        },
+        {
+          "cat": "corps",
+          "done": true,
+          "id": "t16",
+          "label": "Oméga 3"
+        },
+        {
+          "cat": "sport",
+          "done": true,
+          "id": "t17",
+          "label": "Sport du jour ✓"
+        },
+        {
+          "cat": "nutrition",
+          "done": true,
+          "id": "t18",
+          "label": "Nutrition complète ✓"
+        }
+      ],
+      "total": 15
+    }
+  ],
+  "nutritionChecks": {
+    "2026-03-13": {
+      "breakfast": 0,
+      "dinner": 0,
+      "lunch": 0,
+      "snack": 1
+    },
+    "2026-03-14": {
+      "breakfast": 0,
+      "dinner": 1,
+      "lunch": 0,
+      "snack": 1
+    },
+    "2026-03-15": {
+      "breakfast": 0,
+      "dinner": 0,
+      "lunch": true,
+      "snack": 1
+    }
+  },
+  "sportChecks": {
+    "2026-03-13": {
+      "rest-t1": true,
+      "rest-t2": true,
+      "rest-t3": true,
+      "rest-t4": true,
+      "se18-t1": true,
+      "se18-t2": true,
+      "se18-t3": true,
+      "se18-t4": true,
+      "se19-t1": true,
+      "se19-t2": true,
+      "se19-t3": true,
+      "se19-t4": true,
+      "se20-t1": true,
+      "se20-t2": true,
+      "se20-t3": true,
+      "se20-t4": true,
+      "se21-t1": true,
+      "se21-t2": true,
+      "se21-t3": true,
+      "se21-t4": true,
+      "se22-t1": true,
+      "se22-t2": true,
+      "se22-t3": true,
+      "se22-t4": true,
+      "str0": true,
+      "str1": true,
+      "str2": true,
+      "str3": true,
+      "str4": true,
+      "w0": true,
+      "w1": true,
+      "w2": true,
+      "w3": true,
+      "w4": true
+    },
+    "2026-03-14": {
+      "rest-t1": true,
+      "rest-t2": true,
+      "rest-t3": true,
+      "rest-t4": true,
+      "se23-t1": true,
+      "se23-t2": true,
+      "se23-t3": true,
+      "se23-t4": true,
+      "se24-t1": true,
+      "se24-t2": true,
+      "se24-t3": true,
+      "se24-t4": true,
+      "se25-t1": true,
+      "se25-t2": true,
+      "se25-t3": true,
+      "se25-t4": true,
+      "se26-t1": true,
+      "se26-t2": true,
+      "se26-t3": true,
+      "se26-t4": true,
+      "str0": true,
+      "str1": true,
+      "str2": true,
+      "str3": true,
+      "str4": true,
+      "w0": true,
+      "w1": true,
+      "w2": true,
+      "w3": true,
+      "w4": true
+    },
+    "2026-03-15": {
+      "se27": true,
+      "str0": true,
+      "str1": true,
+      "str2": true,
+      "str3": true,
+      "str4": true,
+      "str5": true,
+      "w0": true,
+      "w1": true,
+      "w2": true,
+      "w3": true
+    }
+  },
+  "agendaSynced": {
+    "2026-03-14": true,
+    "2026-03-15": true,
+    "2026-03-16": true,
+    "2026-03-17": true,
+    "2026-03-18": true,
+    "2026-03-19": true,
+    "2026-03-20": true,
+    "2026-03-21": true,
+    "2026-03-22": true,
+    "2026-03-23": true,
+    "2026-03-24": true,
+    "2026-03-25": true,
+    "2026-03-26": true,
+    "2026-03-27": true,
+    "2026-03-28": true
+  },
+  "weekTemplate": [
+    [
+      {
+        "color": "sport",
+        "endH": 9.25,
+        "id": "wt-w55dmx",
+        "label": "Sport Upper",
+        "startH": 8.5
+      },
+      {
+        "color": "work",
+        "endH": 13,
+        "id": "wt-m6uhtb",
+        "label": "Travail agence",
+        "startH": 10
+      },
+      {
+        "color": "prospect",
+        "endH": 17,
+        "id": "wt-pmfgkg",
+        "label": "Prospection",
+        "startH": 14
+      },
+      {
+        "color": "code",
+        "endH": 18,
+        "id": "wt-ovmwu8",
+        "label": "Code route",
+        "startH": 17
+      }
+    ],
+    [
+      {
+        "color": "sport",
+        "endH": 9.25,
+        "id": "wt-2vmi6i",
+        "label": "Sport Lower",
+        "startH": 8.5
+      },
+      {
+        "color": "work",
+        "endH": 13,
+        "id": "wt-bj3fgr",
+        "label": "Travail agence",
+        "startH": 10
+      },
+      {
+        "color": "prospect",
+        "endH": 17,
+        "id": "wt-x9t6w7",
+        "label": "Terrain",
+        "startH": 14
+      },
+      {
+        "color": "code",
+        "endH": 18,
+        "id": "wt-50iiq6",
+        "label": "Code route",
+        "startH": 17
+      }
+    ],
+    [
+      {
+        "color": "rest",
+        "endH": 14,
+        "id": "wt-y7r870",
+        "label": "Cheat meal",
+        "startH": 13
+      },
+      {
+        "color": "rest",
+        "endH": 13,
+        "id": "wt-pvfk1r",
+        "label": "Libre",
+        "startH": 10
+      }
+    ],
+    [
+      {
+        "color": "sport",
+        "endH": 9.25,
+        "id": "wt-o8wkv7",
+        "label": "Sport Back",
+        "startH": 8.5
+      },
+      {
+        "color": "work",
+        "endH": 13,
+        "id": "wt-8cetmw",
+        "label": "Travail agence",
+        "startH": 10
+      },
+      {
+        "color": "prospect",
+        "endH": 17,
+        "id": "wt-5psswm",
+        "label": "Terrain",
+        "startH": 14
+      },
+      {
+        "color": "code",
+        "endH": 18,
+        "id": "wt-o47304",
+        "label": "Code route",
+        "startH": 17
+      }
+    ],
+    [
+      {
+        "color": "sport",
+        "endH": 9.25,
+        "id": "wt-xf3z9l",
+        "label": "Sport Circuit",
+        "startH": 8.5
+      },
+      {
+        "color": "work",
+        "endH": 13,
+        "id": "wt-fh6e8i",
+        "label": "Travail agence",
+        "startH": 10
+      },
+      {
+        "color": "prospect",
+        "endH": 17,
+        "id": "wt-d4y6kv",
+        "label": "Prospection",
+        "startH": 14
+      },
+      {
+        "color": "work",
+        "endH": 19,
+        "id": "wt-woc9zh",
+        "label": "IA / n8n",
+        "startH": 18
+      },
+      {
+        "color": "code",
+        "endH": 18,
+        "id": "wt-zsbfgm",
+        "label": "Code route",
+        "startH": 17
+      }
+    ],
+    [
+      {
+        "color": "sport",
+        "endH": 9.25,
+        "id": "wt-tkrro9",
+        "label": "Sport Pump",
+        "startH": 8.5
+      },
+      {
+        "color": "rest",
+        "endH": 21,
+        "id": "wt-pq089a",
+        "label": "Repos",
+        "startH": 20
+      },
+      {
+        "color": "work",
+        "endH": 13,
+        "id": "wt-eg4r4o",
+        "label": "Business",
+        "startH": 10
+      },
+      {
+        "color": "prospect",
+        "endH": 17,
+        "id": "wt-sz2mkt",
+        "label": "Prospection",
+        "startH": 14
+      }
+    ],
+    [
+      {
+        "color": "rest",
+        "endH": 12,
+        "id": "wt-ls2mq3",
+        "label": "Grands-parents",
+        "startH": 10
+      },
+      {
+        "color": "rando",
+        "endH": 17,
+        "id": "wt-7q5uqw",
+        "label": "Rando 3-4h",
+        "startH": 14
+      },
+      {
+        "color": "work",
+        "endH": 19,
+        "id": "wt-yqtg8a",
+        "label": "Swiss (CV)",
+        "startH": 17
+      },
+      {
+        "color": "rest",
+        "endH": 20,
+        "id": "wt-0jwad3",
+        "label": "Repos total",
+        "startH": 19
+      }
+    ]
+  ],
+  "agendaEvents": [
+    {
+      "color": "sport",
+      "date": "2026-03-16",
+      "endH": 9.25,
+      "fromTmpl": true,
+      "id": "ag-kgx41o",
+      "label": "Sport Upper",
+      "startH": 8.5,
+      "tmplId": "wt-w55dmx"
+    },
+    {
+      "color": "work",
+      "date": "2026-03-16",
+      "endH": 13,
+      "fromTmpl": true,
+      "id": "ag-zwz7al",
+      "label": "Travail agence",
+      "startH": 10,
+      "tmplId": "wt-m6uhtb"
+    },
+    {
+      "color": "prospect",
+      "date": "2026-03-16",
+      "endH": 17,
+      "fromTmpl": true,
+      "id": "ag-351idr",
+      "label": "Prospection",
+      "startH": 14,
+      "tmplId": "wt-pmfgkg"
+    },
+    {
+      "color": "code",
+      "date": "2026-03-16",
+      "endH": 18,
+      "fromTmpl": true,
+      "id": "ag-ixtoia",
+      "label": "Code route",
+      "startH": 17,
+      "tmplId": "wt-ovmwu8"
+    },
+    {
+      "color": "c-zgw",
+      "date": "2026-03-17",
+      "endH": 10,
+      "fromTmpl": true,
+      "id": "ag-4x31wc",
+      "label": "Orthodentiste",
+      "manuallyMoved": true,
+      "startH": 9,
+      "tmplId": "wt-2vmi6i"
+    },
+    {
+      "color": "work",
+      "date": "2026-03-17",
+      "endH": 13,
+      "fromTmpl": true,
+      "id": "ag-omxc2m",
+      "label": "Travail agence",
+      "startH": 10,
+      "tmplId": "wt-bj3fgr"
+    },
+    {
+      "color": "prospect",
+      "date": "2026-03-17",
+      "endH": 17,
+      "fromTmpl": true,
+      "id": "ag-oniwbh",
+      "label": "Terrain",
+      "startH": 14,
+      "tmplId": "wt-x9t6w7"
+    },
+    {
+      "color": "code",
+      "date": "2026-03-17",
+      "endH": 18,
+      "fromTmpl": true,
+      "id": "ag-cwks3h",
+      "label": "Code route",
+      "startH": 17,
+      "tmplId": "wt-50iiq6"
+    },
+    {
+      "color": "sport",
+      "date": "2026-03-19",
+      "endH": 9.25,
+      "fromTmpl": true,
+      "id": "ag-g606dg",
+      "label": "Sport Back",
+      "startH": 8.5,
+      "tmplId": "wt-o8wkv7"
+    },
+    {
+      "color": "work",
+      "date": "2026-03-19",
+      "endH": 13,
+      "fromTmpl": true,
+      "id": "ag-lyd86m",
+      "label": "Travail agence",
+      "startH": 10,
+      "tmplId": "wt-8cetmw"
+    },
+    {
+      "color": "c-zgw",
+      "date": "2026-03-19",
+      "endH": 19,
+      "fromTmpl": true,
+      "id": "ag-wx6i33",
+      "label": "Joelle",
+      "manuallyMoved": true,
+      "startH": 15,
+      "tmplId": "wt-5psswm"
+    },
+    {
+      "color": "code",
+      "date": "2026-03-19",
+      "endH": 20,
+      "fromTmpl": true,
+      "id": "ag-ruzr0c",
+      "label": "Code route",
+      "manuallyMoved": true,
+      "startH": 19,
+      "tmplId": "wt-o47304"
+    },
+    {
+      "color": "sport",
+      "date": "2026-03-23",
+      "endH": 9.25,
+      "fromTmpl": true,
+      "id": "ag-p93fxx",
+      "label": "Sport Upper",
+      "startH": 8.5,
+      "tmplId": "wt-w55dmx"
+    },
+    {
+      "color": "work",
+      "date": "2026-03-23",
+      "endH": 13,
+      "fromTmpl": true,
+      "id": "ag-rqt8rh",
+      "label": "Travail agence",
+      "startH": 10,
+      "tmplId": "wt-m6uhtb"
+    },
+    {
+      "color": "prospect",
+      "date": "2026-03-23",
+      "endH": 17,
+      "fromTmpl": true,
+      "id": "ag-mrtrgi",
+      "label": "Prospection",
+      "startH": 14,
+      "tmplId": "wt-pmfgkg"
+    },
+    {
+      "color": "code",
+      "date": "2026-03-23",
+      "endH": 18,
+      "fromTmpl": true,
+      "id": "ag-qeo58s",
+      "label": "Code route",
+      "startH": 17,
+      "tmplId": "wt-ovmwu8"
+    },
+    {
+      "color": "sport",
+      "date": "2026-03-24",
+      "endH": 9.25,
+      "fromTmpl": true,
+      "id": "ag-l2n4lb",
+      "label": "Sport Lower",
+      "startH": 8.5,
+      "tmplId": "wt-2vmi6i"
+    },
+    {
+      "color": "work",
+      "date": "2026-03-24",
+      "endH": 13,
+      "fromTmpl": true,
+      "id": "ag-g1vvpp",
+      "label": "Travail agence",
+      "startH": 10,
+      "tmplId": "wt-bj3fgr"
+    },
+    {
+      "color": "prospect",
+      "date": "2026-03-24",
+      "endH": 17,
+      "fromTmpl": true,
+      "id": "ag-k7waih",
+      "label": "Terrain",
+      "startH": 14,
+      "tmplId": "wt-x9t6w7"
+    },
+    {
+      "color": "code",
+      "date": "2026-03-24",
+      "endH": 18,
+      "fromTmpl": true,
+      "id": "ag-3wd1mi",
+      "label": "Code route",
+      "startH": 17,
+      "tmplId": "wt-50iiq6"
+    },
+    {
+      "color": "sport",
+      "date": "2026-03-26",
+      "endH": 9.25,
+      "fromTmpl": true,
+      "id": "ag-5hk3o8",
+      "label": "Sport Back",
+      "startH": 8.5,
+      "tmplId": "wt-o8wkv7"
+    },
+    {
+      "color": "work",
+      "date": "2026-03-26",
+      "endH": 13,
+      "fromTmpl": true,
+      "id": "ag-p62iza",
+      "label": "Travail agence",
+      "startH": 10,
+      "tmplId": "wt-8cetmw"
+    },
+    {
+      "color": "prospect",
+      "date": "2026-03-26",
+      "endH": 17,
+      "fromTmpl": true,
+      "id": "ag-19mylq",
+      "label": "Terrain",
+      "startH": 14,
+      "tmplId": "wt-5psswm"
+    },
+    {
+      "color": "code",
+      "date": "2026-03-26",
+      "endH": 18,
+      "fromTmpl": true,
+      "id": "ag-2fnb6s",
+      "label": "Code route",
+      "startH": 17,
+      "tmplId": "wt-o47304"
+    },
+    {
+      "color": "sport",
+      "date": "2026-03-14",
+      "endH": 9.25,
+      "fromTmpl": true,
+      "id": "ag-cwbub3",
+      "label": "Sport Pump",
+      "startH": 8.5,
+      "tmplId": "wt-tkrro9"
+    },
+    {
+      "color": "rest",
+      "date": "2026-03-14",
+      "endH": 21,
+      "fromTmpl": true,
+      "id": "ag-qi9ci7",
+      "label": "Repos",
+      "startH": 20,
+      "tmplId": "wt-pq089a"
+    },
+    {
+      "color": "work",
+      "date": "2026-03-14",
+      "endH": 13,
+      "fromTmpl": true,
+      "id": "ag-ftet75",
+      "label": "Business",
+      "startH": 10,
+      "tmplId": "wt-eg4r4o"
+    },
+    {
+      "color": "prospect",
+      "date": "2026-03-14",
+      "endH": 17,
+      "fromTmpl": true,
+      "id": "ag-vx71bi",
+      "label": "Prospection",
+      "startH": 14,
+      "tmplId": "wt-sz2mkt"
+    },
+    {
+      "color": "sport",
+      "date": "2026-03-21",
+      "endH": 9.25,
+      "fromTmpl": true,
+      "id": "ag-svav1w",
+      "label": "Sport Pump",
+      "startH": 8.5,
+      "tmplId": "wt-tkrro9"
+    },
+    {
+      "color": "rest",
+      "date": "2026-03-21",
+      "endH": 21,
+      "fromTmpl": true,
+      "id": "ag-i608ak",
+      "label": "Repos",
+      "startH": 20,
+      "tmplId": "wt-pq089a"
+    },
+    {
+      "color": "work",
+      "date": "2026-03-21",
+      "endH": 13,
+      "fromTmpl": true,
+      "id": "ag-bd28bu",
+      "label": "Business",
+      "startH": 10,
+      "tmplId": "wt-eg4r4o"
+    },
+    {
+      "color": "prospect",
+      "date": "2026-03-21",
+      "endH": 17,
+      "fromTmpl": true,
+      "id": "ag-mdimhf",
+      "label": "Prospection",
+      "startH": 14,
+      "tmplId": "wt-sz2mkt"
+    },
+    {
+      "color": "sport",
+      "date": "2026-03-28",
+      "endH": 9.25,
+      "fromTmpl": true,
+      "id": "ag-cfz8w0",
+      "label": "Sport Pump",
+      "startH": 8.5,
+      "tmplId": "wt-tkrro9"
+    },
+    {
+      "color": "rest",
+      "date": "2026-03-28",
+      "endH": 21,
+      "fromTmpl": true,
+      "id": "ag-wkatci",
+      "label": "Repos",
+      "startH": 20,
+      "tmplId": "wt-pq089a"
+    },
+    {
+      "color": "work",
+      "date": "2026-03-28",
+      "endH": 13,
+      "fromTmpl": true,
+      "id": "ag-q6pocy",
+      "label": "Business",
+      "startH": 10,
+      "tmplId": "wt-eg4r4o"
+    },
+    {
+      "color": "prospect",
+      "date": "2026-03-28",
+      "endH": 17,
+      "fromTmpl": true,
+      "id": "ag-iigr96",
+      "label": "Prospection",
+      "startH": 14,
+      "tmplId": "wt-sz2mkt"
+    },
+    {
+      "color": "sport",
+      "date": "2026-04-04",
+      "endH": 9.25,
+      "fromTmpl": true,
+      "id": "ag-moii2p",
+      "label": "Sport Pump",
+      "startH": 8.5,
+      "tmplId": "wt-tkrro9"
+    },
+    {
+      "color": "rest",
+      "date": "2026-04-04",
+      "endH": 21,
+      "fromTmpl": true,
+      "id": "ag-ay71ly",
+      "label": "Repos",
+      "startH": 20,
+      "tmplId": "wt-pq089a"
+    },
+    {
+      "color": "work",
+      "date": "2026-04-04",
+      "endH": 13,
+      "fromTmpl": true,
+      "id": "ag-bgmgt9",
+      "label": "Business",
+      "startH": 10,
+      "tmplId": "wt-eg4r4o"
+    },
+    {
+      "color": "prospect",
+      "date": "2026-04-04",
+      "endH": 17,
+      "fromTmpl": true,
+      "id": "ag-4o6k42",
+      "label": "Prospection",
+      "startH": 14,
+      "tmplId": "wt-sz2mkt"
+    },
+    {
+      "color": "sport",
+      "date": "2026-04-11",
+      "endH": 9.25,
+      "fromTmpl": true,
+      "id": "ag-q5rtzx",
+      "label": "Sport Pump",
+      "startH": 8.5,
+      "tmplId": "wt-tkrro9"
+    },
+    {
+      "color": "rest",
+      "date": "2026-04-11",
+      "endH": 21,
+      "fromTmpl": true,
+      "id": "ag-gn5jnc",
+      "label": "Repos",
+      "startH": 20,
+      "tmplId": "wt-pq089a"
+    },
+    {
+      "color": "work",
+      "date": "2026-04-11",
+      "endH": 13,
+      "fromTmpl": true,
+      "id": "ag-nzs6j0",
+      "label": "Business",
+      "startH": 10,
+      "tmplId": "wt-eg4r4o"
+    },
+    {
+      "color": "prospect",
+      "date": "2026-04-11",
+      "endH": 17,
+      "fromTmpl": true,
+      "id": "ag-y8anlx",
+      "label": "Prospection",
+      "startH": 14,
+      "tmplId": "wt-sz2mkt"
+    },
+    {
+      "color": "sport",
+      "date": "2026-04-18",
+      "endH": 9.25,
+      "fromTmpl": true,
+      "id": "ag-unhpwt",
+      "label": "Sport Pump",
+      "startH": 8.5,
+      "tmplId": "wt-tkrro9"
+    },
+    {
+      "color": "rest",
+      "date": "2026-04-18",
+      "endH": 21,
+      "fromTmpl": true,
+      "id": "ag-j05ifs",
+      "label": "Repos",
+      "startH": 20,
+      "tmplId": "wt-pq089a"
+    },
+    {
+      "color": "work",
+      "date": "2026-04-18",
+      "endH": 13,
+      "fromTmpl": true,
+      "id": "ag-ytl50a",
+      "label": "Business",
+      "startH": 10,
+      "tmplId": "wt-eg4r4o"
+    },
+    {
+      "color": "prospect",
+      "date": "2026-04-18",
+      "endH": 17,
+      "fromTmpl": true,
+      "id": "ag-fcygd5",
+      "label": "Prospection",
+      "startH": 14,
+      "tmplId": "wt-sz2mkt"
+    },
+    {
+      "color": "sport",
+      "date": "2026-04-25",
+      "endH": 9.25,
+      "fromTmpl": true,
+      "id": "ag-h6nfww",
+      "label": "Sport Pump",
+      "startH": 8.5,
+      "tmplId": "wt-tkrro9"
+    },
+    {
+      "color": "rest",
+      "date": "2026-04-25",
+      "endH": 21,
+      "fromTmpl": true,
+      "id": "ag-j1dan4",
+      "label": "Repos",
+      "startH": 20,
+      "tmplId": "wt-pq089a"
+    },
+    {
+      "color": "work",
+      "date": "2026-04-25",
+      "endH": 13,
+      "fromTmpl": true,
+      "id": "ag-v3r6c0",
+      "label": "Business",
+      "startH": 10,
+      "tmplId": "wt-eg4r4o"
+    },
+    {
+      "color": "prospect",
+      "date": "2026-04-25",
+      "endH": 17,
+      "fromTmpl": true,
+      "id": "ag-hszcc9",
+      "label": "Prospection",
+      "startH": 14,
+      "tmplId": "wt-sz2mkt"
+    },
+    {
+      "color": "sport",
+      "date": "2026-05-02",
+      "endH": 9.25,
+      "fromTmpl": true,
+      "id": "ag-u5ob7z",
+      "label": "Sport Pump",
+      "startH": 8.5,
+      "tmplId": "wt-tkrro9"
+    },
+    {
+      "color": "rest",
+      "date": "2026-05-02",
+      "endH": 21,
+      "fromTmpl": true,
+      "id": "ag-c4j4om",
+      "label": "Repos",
+      "startH": 20,
+      "tmplId": "wt-pq089a"
+    },
+    {
+      "color": "work",
+      "date": "2026-05-02",
+      "endH": 13,
+      "fromTmpl": true,
+      "id": "ag-y7c321",
+      "label": "Business",
+      "startH": 10,
+      "tmplId": "wt-eg4r4o"
+    },
+    {
+      "color": "prospect",
+      "date": "2026-05-02",
+      "endH": 17,
+      "fromTmpl": true,
+      "id": "ag-hwjufr",
+      "label": "Prospection",
+      "startH": 14,
+      "tmplId": "wt-sz2mkt"
+    },
+    {
+      "color": "sport",
+      "date": "2026-05-09",
+      "endH": 9.25,
+      "fromTmpl": true,
+      "id": "ag-nf894t",
+      "label": "Sport Pump",
+      "startH": 8.5,
+      "tmplId": "wt-tkrro9"
+    },
+    {
+      "color": "rest",
+      "date": "2026-05-09",
+      "endH": 21,
+      "fromTmpl": true,
+      "id": "ag-awc83s",
+      "label": "Repos",
+      "startH": 20,
+      "tmplId": "wt-pq089a"
+    },
+    {
+      "color": "work",
+      "date": "2026-05-09",
+      "endH": 13,
+      "fromTmpl": true,
+      "id": "ag-yl8g96",
+      "label": "Business",
+      "startH": 10,
+      "tmplId": "wt-eg4r4o"
+    },
+    {
+      "color": "prospect",
+      "date": "2026-05-09",
+      "endH": 17,
+      "fromTmpl": true,
+      "id": "ag-hjedo4",
+      "label": "Prospection",
+      "startH": 14,
+      "tmplId": "wt-sz2mkt"
+    },
+    {
+      "color": "sport",
+      "date": "2026-03-17",
+      "endH": 9,
+      "id": "ag-6a337w",
+      "label": "Sport lower",
+      "manuallyMoved": true,
+      "startH": 8
+    },
+    {
+      "color": "sport",
+      "date": "2026-03-28",
+      "endH": 9.25,
+      "fromTmpl": true,
+      "id": "ag-xmdrjx",
+      "label": "Sport Pump",
+      "startH": 8.5,
+      "tmplId": "wt-tkrro9"
+    },
+    {
+      "color": "rest",
+      "date": "2026-03-28",
+      "endH": 21,
+      "fromTmpl": true,
+      "id": "ag-42iyya",
+      "label": "Repos",
+      "startH": 20,
+      "tmplId": "wt-pq089a"
+    },
+    {
+      "color": "work",
+      "date": "2026-03-28",
+      "endH": 13,
+      "fromTmpl": true,
+      "id": "ag-oyn1s6",
+      "label": "Business",
+      "startH": 10,
+      "tmplId": "wt-eg4r4o"
+    },
+    {
+      "color": "prospect",
+      "date": "2026-03-28",
+      "endH": 17,
+      "fromTmpl": true,
+      "id": "ag-psln1h",
+      "label": "Prospection",
+      "startH": 14,
+      "tmplId": "wt-sz2mkt"
+    },
+    {
+      "color": "rest",
+      "date": "2026-03-15",
+      "endH": 12,
+      "fromTmpl": true,
+      "id": "ag-8fd9sh",
+      "label": "Grands-parents",
+      "startH": 10,
+      "tmplId": "wt-ls2mq3"
+    },
+    {
+      "color": "rando",
+      "date": "2026-03-15",
+      "endH": 17,
+      "fromTmpl": true,
+      "id": "ag-mw5a95",
+      "label": "Rando 3-4h",
+      "startH": 14,
+      "tmplId": "wt-7q5uqw"
+    },
+    {
+      "color": "work",
+      "date": "2026-03-15",
+      "endH": 19,
+      "fromTmpl": true,
+      "id": "ag-nf8vls",
+      "label": "Swiss (CV)",
+      "startH": 17,
+      "tmplId": "wt-yqtg8a"
+    },
+    {
+      "color": "rest",
+      "date": "2026-03-15",
+      "endH": 20,
+      "fromTmpl": true,
+      "id": "ag-e0f9wp",
+      "label": "Repos total",
+      "startH": 19,
+      "tmplId": "wt-0jwad3"
+    },
+    {
+      "color": "rest",
+      "date": "2026-03-22",
+      "endH": 12,
+      "fromTmpl": true,
+      "id": "ag-rmtv2k",
+      "label": "Grands-parents",
+      "startH": 10,
+      "tmplId": "wt-ls2mq3"
+    },
+    {
+      "color": "rando",
+      "date": "2026-03-22",
+      "endH": 17,
+      "fromTmpl": true,
+      "id": "ag-i44hhb",
+      "label": "Rando 3-4h",
+      "startH": 14,
+      "tmplId": "wt-7q5uqw"
+    },
+    {
+      "color": "work",
+      "date": "2026-03-22",
+      "endH": 19,
+      "fromTmpl": true,
+      "id": "ag-8dmtdv",
+      "label": "Swiss (CV)",
+      "startH": 17,
+      "tmplId": "wt-yqtg8a"
+    },
+    {
+      "color": "rest",
+      "date": "2026-03-22",
+      "endH": 20,
+      "fromTmpl": true,
+      "id": "ag-zwl66u",
+      "label": "Repos total",
+      "startH": 19,
+      "tmplId": "wt-0jwad3"
+    },
+    {
+      "color": "rest",
+      "date": "2026-03-29",
+      "endH": 12,
+      "fromTmpl": true,
+      "id": "ag-d31vi1",
+      "label": "Grands-parents",
+      "startH": 10,
+      "tmplId": "wt-ls2mq3"
+    },
+    {
+      "color": "rando",
+      "date": "2026-03-29",
+      "endH": 17,
+      "fromTmpl": true,
+      "id": "ag-93g74p",
+      "label": "Rando 3-4h",
+      "startH": 14,
+      "tmplId": "wt-7q5uqw"
+    },
+    {
+      "color": "work",
+      "date": "2026-03-29",
+      "endH": 19,
+      "fromTmpl": true,
+      "id": "ag-n392mw",
+      "label": "Swiss (CV)",
+      "startH": 17,
+      "tmplId": "wt-yqtg8a"
+    },
+    {
+      "color": "rest",
+      "date": "2026-03-29",
+      "endH": 20,
+      "fromTmpl": true,
+      "id": "ag-y97opt",
+      "label": "Repos total",
+      "startH": 19,
+      "tmplId": "wt-0jwad3"
+    },
+    {
+      "color": "rest",
+      "date": "2026-04-05",
+      "endH": 12,
+      "fromTmpl": true,
+      "id": "ag-8igbj4",
+      "label": "Grands-parents",
+      "startH": 10,
+      "tmplId": "wt-ls2mq3"
+    },
+    {
+      "color": "rando",
+      "date": "2026-04-05",
+      "endH": 17,
+      "fromTmpl": true,
+      "id": "ag-r9ozcx",
+      "label": "Rando 3-4h",
+      "startH": 14,
+      "tmplId": "wt-7q5uqw"
+    },
+    {
+      "color": "work",
+      "date": "2026-04-05",
+      "endH": 19,
+      "fromTmpl": true,
+      "id": "ag-mqk7yd",
+      "label": "Swiss (CV)",
+      "startH": 17,
+      "tmplId": "wt-yqtg8a"
+    },
+    {
+      "color": "rest",
+      "date": "2026-04-05",
+      "endH": 20,
+      "fromTmpl": true,
+      "id": "ag-xunwsx",
+      "label": "Repos total",
+      "startH": 19,
+      "tmplId": "wt-0jwad3"
+    },
+    {
+      "color": "rest",
+      "date": "2026-04-12",
+      "endH": 12,
+      "fromTmpl": true,
+      "id": "ag-hk4rl2",
+      "label": "Grands-parents",
+      "startH": 10,
+      "tmplId": "wt-ls2mq3"
+    },
+    {
+      "color": "rando",
+      "date": "2026-04-12",
+      "endH": 17,
+      "fromTmpl": true,
+      "id": "ag-avnqtx",
+      "label": "Rando 3-4h",
+      "startH": 14,
+      "tmplId": "wt-7q5uqw"
+    },
+    {
+      "color": "work",
+      "date": "2026-04-12",
+      "endH": 19,
+      "fromTmpl": true,
+      "id": "ag-5m09bk",
+      "label": "Swiss (CV)",
+      "startH": 17,
+      "tmplId": "wt-yqtg8a"
+    },
+    {
+      "color": "rest",
+      "date": "2026-04-12",
+      "endH": 20,
+      "fromTmpl": true,
+      "id": "ag-8lrpwr",
+      "label": "Repos total",
+      "startH": 19,
+      "tmplId": "wt-0jwad3"
+    },
+    {
+      "color": "rest",
+      "date": "2026-04-19",
+      "endH": 12,
+      "fromTmpl": true,
+      "id": "ag-vjb8mr",
+      "label": "Grands-parents",
+      "startH": 10,
+      "tmplId": "wt-ls2mq3"
+    },
+    {
+      "color": "rando",
+      "date": "2026-04-19",
+      "endH": 17,
+      "fromTmpl": true,
+      "id": "ag-2gqrkq",
+      "label": "Rando 3-4h",
+      "startH": 14,
+      "tmplId": "wt-7q5uqw"
+    },
+    {
+      "color": "work",
+      "date": "2026-04-19",
+      "endH": 19,
+      "fromTmpl": true,
+      "id": "ag-qic7g8",
+      "label": "Swiss (CV)",
+      "startH": 17,
+      "tmplId": "wt-yqtg8a"
+    },
+    {
+      "color": "rest",
+      "date": "2026-04-19",
+      "endH": 20,
+      "fromTmpl": true,
+      "id": "ag-vzyh3r",
+      "label": "Repos total",
+      "startH": 19,
+      "tmplId": "wt-0jwad3"
+    },
+    {
+      "color": "rest",
+      "date": "2026-04-26",
+      "endH": 12,
+      "fromTmpl": true,
+      "id": "ag-hd7m7e",
+      "label": "Grands-parents",
+      "startH": 10,
+      "tmplId": "wt-ls2mq3"
+    },
+    {
+      "color": "rando",
+      "date": "2026-04-26",
+      "endH": 17,
+      "fromTmpl": true,
+      "id": "ag-bf5b2o",
+      "label": "Rando 3-4h",
+      "startH": 14,
+      "tmplId": "wt-7q5uqw"
+    },
+    {
+      "color": "work",
+      "date": "2026-04-26",
+      "endH": 19,
+      "fromTmpl": true,
+      "id": "ag-dgwieh",
+      "label": "Swiss (CV)",
+      "startH": 17,
+      "tmplId": "wt-yqtg8a"
+    },
+    {
+      "color": "rest",
+      "date": "2026-04-26",
+      "endH": 20,
+      "fromTmpl": true,
+      "id": "ag-dcs003",
+      "label": "Repos total",
+      "startH": 19,
+      "tmplId": "wt-0jwad3"
+    },
+    {
+      "color": "rest",
+      "date": "2026-05-03",
+      "endH": 12,
+      "fromTmpl": true,
+      "id": "ag-yow24i",
+      "label": "Grands-parents",
+      "startH": 10,
+      "tmplId": "wt-ls2mq3"
+    },
+    {
+      "color": "rando",
+      "date": "2026-05-03",
+      "endH": 17,
+      "fromTmpl": true,
+      "id": "ag-epscsx",
+      "label": "Rando 3-4h",
+      "startH": 14,
+      "tmplId": "wt-7q5uqw"
+    },
+    {
+      "color": "work",
+      "date": "2026-05-03",
+      "endH": 19,
+      "fromTmpl": true,
+      "id": "ag-dk7uzx",
+      "label": "Swiss (CV)",
+      "startH": 17,
+      "tmplId": "wt-yqtg8a"
+    },
+    {
+      "color": "rest",
+      "date": "2026-05-03",
+      "endH": 20,
+      "fromTmpl": true,
+      "id": "ag-zapjep",
+      "label": "Repos total",
+      "startH": 19,
+      "tmplId": "wt-0jwad3"
+    },
+    {
+      "color": "rest",
+      "date": "2026-05-10",
+      "endH": 12,
+      "fromTmpl": true,
+      "id": "ag-vc4j3i",
+      "label": "Grands-parents",
+      "startH": 10,
+      "tmplId": "wt-ls2mq3"
+    },
+    {
+      "color": "rando",
+      "date": "2026-05-10",
+      "endH": 17,
+      "fromTmpl": true,
+      "id": "ag-964ubs",
+      "label": "Rando 3-4h",
+      "startH": 14,
+      "tmplId": "wt-7q5uqw"
+    },
+    {
+      "color": "work",
+      "date": "2026-05-10",
+      "endH": 19,
+      "fromTmpl": true,
+      "id": "ag-xezq7e",
+      "label": "Swiss (CV)",
+      "startH": 17,
+      "tmplId": "wt-yqtg8a"
+    },
+    {
+      "color": "rest",
+      "date": "2026-05-10",
+      "endH": 20,
+      "fromTmpl": true,
+      "id": "ag-i46x7z",
+      "label": "Repos total",
+      "startH": 19,
+      "tmplId": "wt-0jwad3"
+    },
+    {
+      "color": "sport",
+      "date": "2026-03-20",
+      "endH": 9.25,
+      "fromTmpl": true,
+      "id": "ag-6986di",
+      "label": "Sport Circuit",
+      "startH": 8.5,
+      "tmplId": "wt-xf3z9l"
+    },
+    {
+      "color": "work",
+      "date": "2026-03-20",
+      "endH": 13,
+      "fromTmpl": true,
+      "id": "ag-592n0v",
+      "label": "Travail agence",
+      "startH": 10,
+      "tmplId": "wt-fh6e8i"
+    },
+    {
+      "color": "prospect",
+      "date": "2026-03-20",
+      "endH": 17,
+      "fromTmpl": true,
+      "id": "ag-swynxu",
+      "label": "Prospection",
+      "startH": 14,
+      "tmplId": "wt-d4y6kv"
+    },
+    {
+      "color": "work",
+      "date": "2026-03-20",
+      "endH": 19,
+      "fromTmpl": true,
+      "id": "ag-1l714i",
+      "label": "IA / n8n",
+      "startH": 18,
+      "tmplId": "wt-woc9zh"
+    },
+    {
+      "color": "code",
+      "date": "2026-03-20",
+      "endH": 18,
+      "fromTmpl": true,
+      "id": "ag-j3j85d",
+      "label": "Code route",
+      "startH": 17,
+      "tmplId": "wt-zsbfgm"
+    },
+    {
+      "color": "sport",
+      "date": "2026-03-27",
+      "endH": 9.25,
+      "fromTmpl": true,
+      "id": "ag-8mb1cu",
+      "label": "Sport Circuit",
+      "startH": 8.5,
+      "tmplId": "wt-xf3z9l"
+    },
+    {
+      "color": "work",
+      "date": "2026-03-27",
+      "endH": 13,
+      "fromTmpl": true,
+      "id": "ag-nlw7ao",
+      "label": "Travail agence",
+      "startH": 10,
+      "tmplId": "wt-fh6e8i"
+    },
+    {
+      "color": "prospect",
+      "date": "2026-03-27",
+      "endH": 17,
+      "fromTmpl": true,
+      "id": "ag-r35d9u",
+      "label": "Prospection",
+      "startH": 14,
+      "tmplId": "wt-d4y6kv"
+    },
+    {
+      "color": "work",
+      "date": "2026-03-27",
+      "endH": 19,
+      "fromTmpl": true,
+      "id": "ag-2prlb7",
+      "label": "IA / n8n",
+      "startH": 18,
+      "tmplId": "wt-woc9zh"
+    },
+    {
+      "color": "code",
+      "date": "2026-03-27",
+      "endH": 18,
+      "fromTmpl": true,
+      "id": "ag-airqgb",
+      "label": "Code route",
+      "startH": 17,
+      "tmplId": "wt-zsbfgm"
+    },
+    {
+      "color": "sport",
+      "date": "2026-04-03",
+      "endH": 9.25,
+      "fromTmpl": true,
+      "id": "ag-104x8a",
+      "label": "Sport Circuit",
+      "startH": 8.5,
+      "tmplId": "wt-xf3z9l"
+    },
+    {
+      "color": "work",
+      "date": "2026-04-03",
+      "endH": 13,
+      "fromTmpl": true,
+      "id": "ag-9dmal1",
+      "label": "Travail agence",
+      "startH": 10,
+      "tmplId": "wt-fh6e8i"
+    },
+    {
+      "color": "prospect",
+      "date": "2026-04-03",
+      "endH": 17,
+      "fromTmpl": true,
+      "id": "ag-ghje28",
+      "label": "Prospection",
+      "startH": 14,
+      "tmplId": "wt-d4y6kv"
+    },
+    {
+      "color": "work",
+      "date": "2026-04-03",
+      "endH": 19,
+      "fromTmpl": true,
+      "id": "ag-cy3j1p",
+      "label": "IA / n8n",
+      "startH": 18,
+      "tmplId": "wt-woc9zh"
+    },
+    {
+      "color": "code",
+      "date": "2026-04-03",
+      "endH": 18,
+      "fromTmpl": true,
+      "id": "ag-73domx",
+      "label": "Code route",
+      "startH": 17,
+      "tmplId": "wt-zsbfgm"
+    },
+    {
+      "color": "sport",
+      "date": "2026-04-10",
+      "endH": 9.25,
+      "fromTmpl": true,
+      "id": "ag-ji1got",
+      "label": "Sport Circuit",
+      "startH": 8.5,
+      "tmplId": "wt-xf3z9l"
+    },
+    {
+      "color": "work",
+      "date": "2026-04-10",
+      "endH": 13,
+      "fromTmpl": true,
+      "id": "ag-03xwt9",
+      "label": "Travail agence",
+      "startH": 10,
+      "tmplId": "wt-fh6e8i"
+    },
+    {
+      "color": "prospect",
+      "date": "2026-04-10",
+      "endH": 17,
+      "fromTmpl": true,
+      "id": "ag-lnkjai",
+      "label": "Prospection",
+      "startH": 14,
+      "tmplId": "wt-d4y6kv"
+    },
+    {
+      "color": "work",
+      "date": "2026-04-10",
+      "endH": 19,
+      "fromTmpl": true,
+      "id": "ag-q0odsf",
+      "label": "IA / n8n",
+      "startH": 18,
+      "tmplId": "wt-woc9zh"
+    },
+    {
+      "color": "code",
+      "date": "2026-04-10",
+      "endH": 18,
+      "fromTmpl": true,
+      "id": "ag-ip9e99",
+      "label": "Code route",
+      "startH": 17,
+      "tmplId": "wt-zsbfgm"
+    },
+    {
+      "color": "sport",
+      "date": "2026-04-17",
+      "endH": 9.25,
+      "fromTmpl": true,
+      "id": "ag-hln25x",
+      "label": "Sport Circuit",
+      "startH": 8.5,
+      "tmplId": "wt-xf3z9l"
+    },
+    {
+      "color": "work",
+      "date": "2026-04-17",
+      "endH": 13,
+      "fromTmpl": true,
+      "id": "ag-f030tv",
+      "label": "Travail agence",
+      "startH": 10,
+      "tmplId": "wt-fh6e8i"
+    },
+    {
+      "color": "prospect",
+      "date": "2026-04-17",
+      "endH": 17,
+      "fromTmpl": true,
+      "id": "ag-4fnt65",
+      "label": "Prospection",
+      "startH": 14,
+      "tmplId": "wt-d4y6kv"
+    },
+    {
+      "color": "work",
+      "date": "2026-04-17",
+      "endH": 19,
+      "fromTmpl": true,
+      "id": "ag-54wx7k",
+      "label": "IA / n8n",
+      "startH": 18,
+      "tmplId": "wt-woc9zh"
+    },
+    {
+      "color": "code",
+      "date": "2026-04-17",
+      "endH": 18,
+      "fromTmpl": true,
+      "id": "ag-wwem3m",
+      "label": "Code route",
+      "startH": 17,
+      "tmplId": "wt-zsbfgm"
+    },
+    {
+      "color": "sport",
+      "date": "2026-04-24",
+      "endH": 9.25,
+      "fromTmpl": true,
+      "id": "ag-2whukr",
+      "label": "Sport Circuit",
+      "startH": 8.5,
+      "tmplId": "wt-xf3z9l"
+    },
+    {
+      "color": "work",
+      "date": "2026-04-24",
+      "endH": 13,
+      "fromTmpl": true,
+      "id": "ag-lif4qy",
+      "label": "Travail agence",
+      "startH": 10,
+      "tmplId": "wt-fh6e8i"
+    },
+    {
+      "color": "prospect",
+      "date": "2026-04-24",
+      "endH": 17,
+      "fromTmpl": true,
+      "id": "ag-vb0gr8",
+      "label": "Prospection",
+      "startH": 14,
+      "tmplId": "wt-d4y6kv"
+    },
+    {
+      "color": "work",
+      "date": "2026-04-24",
+      "endH": 19,
+      "fromTmpl": true,
+      "id": "ag-6qt2a8",
+      "label": "IA / n8n",
+      "startH": 18,
+      "tmplId": "wt-woc9zh"
+    },
+    {
+      "color": "code",
+      "date": "2026-04-24",
+      "endH": 18,
+      "fromTmpl": true,
+      "id": "ag-3eeqkn",
+      "label": "Code route",
+      "startH": 17,
+      "tmplId": "wt-zsbfgm"
+    },
+    {
+      "color": "sport",
+      "date": "2026-05-01",
+      "endH": 9.25,
+      "fromTmpl": true,
+      "id": "ag-mkgvbb",
+      "label": "Sport Circuit",
+      "startH": 8.5,
+      "tmplId": "wt-xf3z9l"
+    },
+    {
+      "color": "work",
+      "date": "2026-05-01",
+      "endH": 13,
+      "fromTmpl": true,
+      "id": "ag-ujg4uk",
+      "label": "Travail agence",
+      "startH": 10,
+      "tmplId": "wt-fh6e8i"
+    },
+    {
+      "color": "prospect",
+      "date": "2026-05-01",
+      "endH": 17,
+      "fromTmpl": true,
+      "id": "ag-8yq5w7",
+      "label": "Prospection",
+      "startH": 14,
+      "tmplId": "wt-d4y6kv"
+    },
+    {
+      "color": "work",
+      "date": "2026-05-01",
+      "endH": 19,
+      "fromTmpl": true,
+      "id": "ag-sp3848",
+      "label": "IA / n8n",
+      "startH": 18,
+      "tmplId": "wt-woc9zh"
+    },
+    {
+      "color": "code",
+      "date": "2026-05-01",
+      "endH": 18,
+      "fromTmpl": true,
+      "id": "ag-wsnq27",
+      "label": "Code route",
+      "startH": 17,
+      "tmplId": "wt-zsbfgm"
+    },
+    {
+      "color": "sport",
+      "date": "2026-05-08",
+      "endH": 9.25,
+      "fromTmpl": true,
+      "id": "ag-pkwsn2",
+      "label": "Sport Circuit",
+      "startH": 8.5,
+      "tmplId": "wt-xf3z9l"
+    },
+    {
+      "color": "work",
+      "date": "2026-05-08",
+      "endH": 13,
+      "fromTmpl": true,
+      "id": "ag-d2u26x",
+      "label": "Travail agence",
+      "startH": 10,
+      "tmplId": "wt-fh6e8i"
+    },
+    {
+      "color": "prospect",
+      "date": "2026-05-08",
+      "endH": 17,
+      "fromTmpl": true,
+      "id": "ag-di94mh",
+      "label": "Prospection",
+      "startH": 14,
+      "tmplId": "wt-d4y6kv"
+    },
+    {
+      "color": "work",
+      "date": "2026-05-08",
+      "endH": 19,
+      "fromTmpl": true,
+      "id": "ag-8nk0kb",
+      "label": "IA / n8n",
+      "startH": 18,
+      "tmplId": "wt-woc9zh"
+    },
+    {
+      "color": "code",
+      "date": "2026-05-08",
+      "endH": 18,
+      "fromTmpl": true,
+      "id": "ag-2974q8",
+      "label": "Code route",
+      "startH": 17,
+      "tmplId": "wt-zsbfgm"
+    },
+    {
+      "color": "rest",
+      "date": "2026-03-18",
+      "endH": 14,
+      "fromTmpl": true,
+      "id": "ag-t6clqc",
+      "label": "Cheat meal",
+      "startH": 13,
+      "tmplId": "wt-y7r870"
+    },
+    {
+      "color": "rest",
+      "date": "2026-03-18",
+      "endH": 13,
+      "fromTmpl": true,
+      "id": "ag-imw4g4",
+      "label": "Libre",
+      "startH": 10,
+      "tmplId": "wt-pvfk1r"
+    },
+    {
+      "color": "rest",
+      "date": "2026-03-25",
+      "endH": 14,
+      "fromTmpl": true,
+      "id": "ag-1d3tpx",
+      "label": "Cheat meal",
+      "startH": 13,
+      "tmplId": "wt-y7r870"
+    },
+    {
+      "color": "rest",
+      "date": "2026-03-25",
+      "endH": 13,
+      "fromTmpl": true,
+      "id": "ag-50ycs1",
+      "label": "Libre",
+      "startH": 10,
+      "tmplId": "wt-pvfk1r"
+    },
+    {
+      "color": "rest",
+      "date": "2026-04-01",
+      "endH": 14,
+      "fromTmpl": true,
+      "id": "ag-3dvvd4",
+      "label": "Cheat meal",
+      "startH": 13,
+      "tmplId": "wt-y7r870"
+    },
+    {
+      "color": "rest",
+      "date": "2026-04-01",
+      "endH": 13,
+      "fromTmpl": true,
+      "id": "ag-7v8s9s",
+      "label": "Libre",
+      "startH": 10,
+      "tmplId": "wt-pvfk1r"
+    },
+    {
+      "color": "rest",
+      "date": "2026-04-08",
+      "endH": 14,
+      "fromTmpl": true,
+      "id": "ag-yx9u0d",
+      "label": "Cheat meal",
+      "startH": 13,
+      "tmplId": "wt-y7r870"
+    },
+    {
+      "color": "rest",
+      "date": "2026-04-08",
+      "endH": 13,
+      "fromTmpl": true,
+      "id": "ag-qnuo1l",
+      "label": "Libre",
+      "startH": 10,
+      "tmplId": "wt-pvfk1r"
+    },
+    {
+      "color": "rest",
+      "date": "2026-04-15",
+      "endH": 14,
+      "fromTmpl": true,
+      "id": "ag-fzaarz",
+      "label": "Cheat meal",
+      "startH": 13,
+      "tmplId": "wt-y7r870"
+    },
+    {
+      "color": "rest",
+      "date": "2026-04-15",
+      "endH": 13,
+      "fromTmpl": true,
+      "id": "ag-3xcoif",
+      "label": "Libre",
+      "startH": 10,
+      "tmplId": "wt-pvfk1r"
+    },
+    {
+      "color": "rest",
+      "date": "2026-04-22",
+      "endH": 14,
+      "fromTmpl": true,
+      "id": "ag-11v84l",
+      "label": "Cheat meal",
+      "startH": 13,
+      "tmplId": "wt-y7r870"
+    },
+    {
+      "color": "rest",
+      "date": "2026-04-22",
+      "endH": 13,
+      "fromTmpl": true,
+      "id": "ag-5sqp1f",
+      "label": "Libre",
+      "startH": 10,
+      "tmplId": "wt-pvfk1r"
+    },
+    {
+      "color": "rest",
+      "date": "2026-04-29",
+      "endH": 14,
+      "fromTmpl": true,
+      "id": "ag-5iby62",
+      "label": "Cheat meal",
+      "startH": 13,
+      "tmplId": "wt-y7r870"
+    },
+    {
+      "color": "rest",
+      "date": "2026-04-29",
+      "endH": 13,
+      "fromTmpl": true,
+      "id": "ag-3icud3",
+      "label": "Libre",
+      "startH": 10,
+      "tmplId": "wt-pvfk1r"
+    },
+    {
+      "color": "rest",
+      "date": "2026-05-06",
+      "endH": 14,
+      "fromTmpl": true,
+      "id": "ag-j4ivr4",
+      "label": "Cheat meal",
+      "startH": 13,
+      "tmplId": "wt-y7r870"
+    },
+    {
+      "color": "rest",
+      "date": "2026-05-06",
+      "endH": 13,
+      "fromTmpl": true,
+      "id": "ag-hnqznn",
+      "label": "Libre",
+      "startH": 10,
+      "tmplId": "wt-pvfk1r"
+    },
+    {
+      "color": "rest",
+      "date": "2026-05-13",
+      "endH": 14,
+      "fromTmpl": true,
+      "id": "ag-c709mx",
+      "label": "Cheat meal",
+      "startH": 13,
+      "tmplId": "wt-y7r870"
+    },
+    {
+      "color": "rest",
+      "date": "2026-05-13",
+      "endH": 13,
+      "fromTmpl": true,
+      "id": "ag-ogj1rm",
+      "label": "Libre",
+      "startH": 10,
+      "tmplId": "wt-pvfk1r"
+    }
+  ],
+  "customColors": {
+    "c-zgw": {
+      "hex": "#F117FF",
+      "name": "RDV"
+    }
+  },
+  "baseRoutine": [
+    {
+      "cat": "mental",
+      "id": "t2",
+      "label": "Méditation 30 min"
+    },
+    {
+      "cat": "business",
+      "id": "t3",
+      "label": "Prospecter 20 entreprises"
+    },
+    {
+      "cat": "business",
+      "id": "t4",
+      "label": "Travail agence 3h+"
+    },
+    {
+      "cat": "code",
+      "id": "t5",
+      "label": "Code de la route 1h"
+    },
+    {
+      "cat": "ia",
+      "id": "t6",
+      "label": "n8n / IA 30 min"
+    },
+    {
+      "cat": "corps",
+      "id": "t7",
+      "label": "2L eau minimum"
+    },
+    {
+      "cat": "mental",
+      "id": "t9",
+      "label": "Lecture 30 min"
+    },
+    {
+      "cat": "corps",
+      "id": "t8",
+      "label": "Lumière du jour 15 min"
+    },
+    {
+      "cat": "mental",
+      "id": "t10",
+      "label": "Couché avant -23H"
+    },
+    {
+      "cat": "discipline",
+      "id": "t11",
+      "label": "No fap"
+    },
+    {
+      "cat": "discipline",
+      "id": "t12",
+      "label": "No Sofia"
+    },
+    {
+      "cat": "discipline",
+      "id": "t13",
+      "label": "No doomscroll"
+    },
+    {
+      "cat": "discipline",
+      "id": "t19",
+      "label": "No smoke"
+    },
+    {
+      "cat": "corps",
+      "id": "t14",
+      "label": "Créatine"
+    },
+    {
+      "cat": "corps",
+      "id": "t15",
+      "label": "Whey"
+    },
+    {
+      "cat": "corps",
+      "id": "t16",
+      "label": "Oméga 3"
+    },
+    {
+      "cat": "sport",
+      "id": "t17",
+      "label": "Sport du jour ✓"
+    },
+    {
+      "cat": "nutrition",
+      "id": "t18",
+      "label": "Nutrition complète ✓"
+    }
+  ],
+  "agendaExclusions": {
+    "2026-03-19": [
+      "wt-mkdm0i",
+      "wt-kaie8e"
+    ]
+  }
+}
