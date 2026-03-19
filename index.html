@@ -1294,6 +1294,15 @@ if(S.baseRoutine&&!S.baseRoutine.find(x=>x.id==='t20')){
   S.baseRoutine.forEach(br=>{const d=DAILY.find(x=>x.id===br.id);if(d){if(!br.group)br.group=d.group;if(!br.activeDays&&d.activeDays)br.activeDays=d.activeDays;}});
   S.checkDate=null;
 }
+// Déduplication todoHistory (une seule entrée par date, garde la plus complète)
+if(S.todoHistory&&S.todoHistory.length){
+  const byDate={};
+  S.todoHistory.forEach(h=>{
+    if(!byDate[h.date]||h.done>byDate[h.date].done||(h.items&&h.items.length>(byDate[h.date].items||[]).length))
+      byDate[h.date]=h;
+  });
+  S.todoHistory=Object.values(byDate).sort((a,b)=>a.date.localeCompare(b.date));
+}
 // Migration t34/t35 : No Alcohol + No Video Games
 if(S.baseRoutine&&!S.baseRoutine.find(x=>x.id==='t34')){
   ['t34','t35'].forEach(id=>{const d=DAILY.find(x=>x.id===id);if(d&&!S.baseRoutine.find(b=>b.id===id))S.baseRoutine.push({id:d.id,label:d.label,cat:d.cat,group:d.group});});
@@ -1373,7 +1382,7 @@ function buildTodosForDay(base,dateStr){
   // Jour de la semaine Monday-based (0=lundi...6=dimanche)
   const dow=(new Date(dateStr+'T12:00').getDay()+6)%7;
   // Heure coucher fixe par jour de la semaine (1=mardi, 5=samedi → 1h du matin, sinon 23h)
-  const sleepLabel=(dow===1||dow===5)?'Couché avant 1h':'Couché avant 23h';
+  const sleepLabel='Couché';
   return base.map(x=>{
     const daily=dailyMap[x.id];
     // Items à label dynamique
@@ -1640,7 +1649,7 @@ function renderHistory(){
   }).join('');
   // streak
   let streak=0;
-  const sorted=[...S.todoHistory].sort((a,b)=>b.date.localeCompare(a.date));
+  const sorted=[...S.todoHistory].filter(h=>h.date>=(S.start90||'1970-01-01')).sort((a,b)=>b.date.localeCompare(a.date));
   for(const h of sorted){if(h.done/h.total>=0.7)streak++;else break;}
   if(todayTotal>0&&todayDone/todayTotal>=0.7)streak++;
   document.getElementById('h-streak').textContent=streak+'j streak 🔥';
@@ -1664,9 +1673,9 @@ function renderWeeklyTracker(){
   const rows=todayItems.map(t=>({id:t.id,label:t.label,group:t.group||''}));
   const DAY_MON=['L','M','M','J','V','S','D'];
   const circ=2*Math.PI*14;
-  let html='<table style="border-collapse:collapse;min-width:max-content">';
+  let html='<table style="border-collapse:collapse;min-width:max-content;border-spacing:0">';
   html+='<thead><tr>';
-  html+=`<th style="position:sticky;left:0;z-index:6;background:var(--surface);min-width:110px;max-width:140px;padding:0 6px 8px 0;text-align:left;font-family:var(--mono);font-size:8px;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;font-weight:400"></th>`;
+  html+=`<th style="position:sticky;left:0;z-index:6;background:var(--surface);min-width:120px;max-width:150px;padding:0 8px 10px 0;text-align:left;font-family:var(--mono);font-size:8px;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;font-weight:400"></th>`;
   days.forEach(day=>{
     const isToday=day===today;
     const d=new Date(day+'T12:00');
@@ -1681,7 +1690,7 @@ function renderWeeklyTracker(){
     const color=pct>=80?'var(--accent)':pct>=60?'var(--green)':pct>=30?'var(--orange)':'var(--red)';
     const offset=applicable.length>0?circ*(1-pct/100):circ;
     const todayBorder=isToday?'outline:1px solid rgba(var(--accent-rgb),.35);outline-offset:-2px;border-radius:8px;background:rgba(var(--accent-rgb),.04);':'';
-    html+=`<th style="min-width:44px;text-align:center;padding:0 2px 6px;${todayBorder}">
+    html+=`<th style="min-width:50px;text-align:center;padding:0 3px 8px;${todayBorder}">
       <div style="display:flex;flex-direction:column;align-items:center;gap:1px">
         <svg width="36" height="36" viewBox="0 0 36 36">
           <circle cx="18" cy="18" r="14" fill="none" stroke="var(--glass3)" stroke-width="3"/>
@@ -1695,7 +1704,9 @@ function renderWeeklyTracker(){
   });
   html+='</tr></thead><tbody>';
   rows.forEach((row,rowIdx)=>{
-    html+=`<tr><td style="position:sticky;left:0;z-index:5;background:var(--surface);padding:3px 6px 3px 0;font-family:var(--mono);font-size:8.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.3px;white-space:nowrap;max-width:140px;overflow:hidden;text-overflow:ellipsis" title="${row.label}">${row.label}</td>`;
+      const isGroupSep=rowIdx>0&&rows[rowIdx-1].group!==row.group;
+      const sepStyle=isGroupSep?'border-top:1.5px solid var(--glass3);':'border-top:1px solid var(--border1);';
+    html+=`<tr><td style="position:sticky;left:0;z-index:5;background:var(--surface);padding:5px 8px 5px 0;font-family:var(--mono);font-size:9px;color:var(--text2);text-transform:uppercase;letter-spacing:.3px;white-space:nowrap;max-width:150px;overflow:hidden;text-overflow:ellipsis;${sepStyle}" title="${row.label}">${row.label}</td>`;
     days.forEach(day=>{
       const isToday=day===today;
       const d=new Date(day+'T12:00');
@@ -1711,14 +1722,14 @@ function renderWeeklyTracker(){
       if(excluded){
         cell=`<span style="font-family:var(--mono);font-size:9px;color:var(--border2)">—</span>`;
       } else if(item&&item.done){
-        cell=`<div style="width:10px;height:10px;background:var(--accent);border-radius:2px;margin:0 auto"></div>`;
+        cell=`<div style="width:13px;height:13px;background:var(--accent);border-radius:3px;margin:0 auto;display:flex;align-items:center;justify-content:center;font-size:9px;color:#fff">✓</div>`;
         onclick=isToday?`onclick="toggleTodo(${itemIdx},true)"`:`onclick="wtToggle('${day}','${row.id}','${row.label}','${row.group||''}')"`;
       } else {
-        cell=`<div style="width:10px;height:10px;border:1.5px solid var(--muted2);border-radius:2px;margin:0 auto;opacity:.4"></div>`;
+        cell=`<div style="width:13px;height:13px;border:1.5px solid var(--muted2);border-radius:3px;margin:0 auto;opacity:.35"></div>`;
         if(isToday&&itemIdx>=0){onclick=`onclick="toggleTodo(${itemIdx},true)"`;}
         else if(!isToday){onclick=`onclick="wtToggle('${day}','${row.id}','${row.label}','${row.group||''}')"`;};
       }
-      html+=`<td style="text-align:center;padding:3px 2px;cursor:${excluded?'default':'pointer'};${todayBg}" ${onclick} title="${row.label}">${cell}</td>`;
+      html+=`<td style="text-align:center;padding:5px 3px;cursor:${excluded?'default':'pointer'};${todayBg}${sepStyle}" ${onclick} title="${row.label}">${cell}</td>`;
     });
     html+='</tr>';
   });
@@ -1750,6 +1761,8 @@ function wtToggle(date,itemId,label,cat){
     h={date,done:0,total:builtItems.length,lifeScore:0,items:builtItems};
     S.todoHistory.push(h);
   }
+  // Dédupliquer les items du jour si besoin
+  const seen=new Set();h.items=h.items.filter(x=>{if(seen.has(x.id))return false;seen.add(x.id);return true;});
   let item=h.items.find(x=>x.id===itemId);
   if(!item){
     item={id:itemId,label:label||itemId,cat:cat||'',done:false};
@@ -2037,12 +2050,16 @@ function agendaReSyncDay(dateStr){
 }
 function fmtH(h){const hrs=Math.floor(h);const m=Math.round((h-hrs)*60);return hrs+'h'+(m?String(m).padStart(2,'0'):'');}
 let planTab='template';
+let planClipboard=null;
 let planMobileDay=(new Date().getDay()+6)%7;
 let planMobileAgendaDate=new Date().toISOString().slice(0,10);
 function switchPlanTab(t){planTab=t;document.querySelectorAll('.plan-tab').forEach(b=>b.classList.toggle('active',b.dataset.tab===t));renderPlanContent();}
 function renderPlan(){
   initPlanState();
   for(let i=0;i<14;i++){const d=new Date();d.setDate(d.getDate()+i);agendaSyncDay(d.toISOString().slice(0,10));}
+  // Déduplication agendaEvents (même date+tmplId)
+  const seenAg=new Set();
+  S.agendaEvents=S.agendaEvents.filter(ev=>{if(!ev.fromTmpl)return true;const k=ev.date+'|'+ev.tmplId;if(seenAg.has(k))return false;seenAg.add(k);return true;});
   save();
   const inner=document.getElementById('plan-view-inner');if(!inner)return;
   const colors=allColors();
@@ -2113,9 +2130,10 @@ function buildTimeGrid(days,getEvs){
       h+=`<div class="tg-event" style="top:${top+2}px;height:${height}px;background:${hex}18;border-left-color:${hex};color:${hex}" draggable="true" ondragstart="tgDragStart(event,'${ev.id}')" ondragend="tgDragEnd(event)" onclick="tgEvClick(event,'${ev.id}','${day.key}');event.stopPropagation()">
         <div style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:700">${ev.label}</div>
         ${dur>=0.4?`<div style="font-size:8px;opacity:.65">${fmtH(ev.startH)}–${fmtH(ev.endH)}</div>`:''}
+        ${planTab==='template'?`<div style="position:absolute;top:2px;right:2px" onclick="copyTmplEvent('${ev.id}',${parseInt(day.key)});event.stopPropagation()"><span style="font-size:9px;opacity:.6;cursor:pointer;line-height:1" title="Copier">📋</span></div>`:''}
       </div>`;
     });
-    h+=`</div></div>`;
+    h+=`</div>${planTab==='template'&&planClipboard?`<button onclick="pasteTmplEvent(${parseInt(day.key)});event.stopPropagation()" style="width:100%;margin-top:4px;padding:3px 0;font-size:10px;font-weight:600;background:var(--glass2);border:1px dashed var(--border2);border-radius:6px;color:var(--muted);cursor:pointer">Coller</button>`:''}  </div>`;
   });
   h+=`</div></div></div>`;return h;
 }
@@ -2124,6 +2142,21 @@ function renderTemplateGrid(el){
   const tdow=(new Date().getDay()+6)%7;
   const days=DN.map((l,i)=>({key:String(i),label:l,today:i===tdow,sub:''}));
   el.innerHTML=buildTimeGrid(days,d=>S.weekTemplate[parseInt(d.key)]||[]);
+}
+function showToast(msg){const t=document.createElement('div');t.textContent=msg;t.style.cssText='position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:var(--surface2);color:var(--text);padding:8px 18px;border-radius:99px;font-size:13px;font-weight:600;z-index:9999;box-shadow:0 4px 20px rgba(0,0,0,.3);pointer-events:none';document.body.appendChild(t);setTimeout(()=>t.remove(),2000);}
+function copyTmplEvent(evId,dow){
+  const ev=(S.weekTemplate[dow]||[]).find(x=>x.id===evId);
+  if(!ev)return;
+  planClipboard={...ev,id:undefined};
+  showToast('📋 Bloc copié');
+  renderPlanContent();
+}
+function pasteTmplEvent(dow){
+  if(!planClipboard)return;
+  if(!S.weekTemplate[dow])S.weekTemplate[dow]=[];
+  S.weekTemplate[dow].push({...planClipboard,id:'wt-'+Math.random().toString(36).slice(2,8)});
+  S.weekTemplate[dow].sort((a,b)=>a.startH-b.startH);
+  save();renderPlanContent();showToast('✅ Bloc collé');
 }
 let agendaWeekOffset=0;
 function navAgenda(dir){
