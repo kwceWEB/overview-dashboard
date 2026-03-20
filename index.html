@@ -519,7 +519,7 @@ hr{border:none;border-top:1px solid var(--border);margin:16px 0}
   <nav class="nav">
     <button class="nav-item active" onclick="go('home',this)" data-view="home"><span class="nav-icon">🏠</span>Vue d'ensemble</button>
     <button class="nav-item" onclick="go('todo',this)" data-view="todo"><span class="nav-icon">✅</span>Checklist</button>
-    <button class="nav-item" onclick="go('planning',this)" data-view="planning"><span class="nav-icon">📊</span>Tracker Complet</button>
+    <button class="nav-item" onclick="go('tracker',this)" data-view="tracker"><span class="nav-icon">📊</span>Tracker Complet</button>
     <button class="nav-item" onclick="go('sport',this)" data-view="sport"><span class="nav-icon">🏋</span>Sport</button>
     <button class="nav-item" onclick="go('nutrition',this)" data-view="nutrition"><span class="nav-icon">🍎</span>Nutrition</button>
     <button class="nav-item" onclick="go('planning',this)" data-view="planning"><span class="nav-icon">📅</span>Planning</button>
@@ -740,14 +740,6 @@ hr{border:none;border-top:1px solid var(--border);margin:16px 0}
       </div>
     </div>
 
-    <!-- WEEKLY TRACKER -->
-    <div class="card gap">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
-        <div class="card-title" style="margin:0">Weekly Tracker</div>
-      </div>
-      <div id="weekly-tracker" style="overflow-x:auto;-webkit-overflow-scrolling:touch"></div>
-    </div>
-
     <!-- HIDDEN COMPAT ELEMENTS -->
     <div style="display:none">
       <div id="h-todos"></div>
@@ -791,6 +783,19 @@ hr{border:none;border-top:1px solid var(--border);margin:16px 0}
         <input type="text" id="new-todo" placeholder="Ajouter une tache business..." onkeydown="if(event.key==='Enter')addTodo()">
         <button class="btn btn-sm" onclick="addTodo()">+</button>
       </div>
+    </div>
+  </div>
+
+  <!-- TRACKER COMPLET -->
+  <div class="view" id="view-tracker">
+    <div style="display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:16px;margin-bottom:28px">
+      <div class="ph" style="margin-bottom:0">
+        <div class="ph-title">Weekly Tracker</div>
+        <div class="ph-sub">Visualise tes patterns. La consistance bat l'intensite.</div>
+      </div>
+    </div>
+    <div class="card" style="overflow:hidden">
+      <div id="weekly-tracker" style="overflow-x:auto;-webkit-overflow-scrolling:touch"></div>
     </div>
   </div>
 
@@ -1142,7 +1147,7 @@ function reRenderActive(){
   const active=document.querySelector('.view.active');
   if(active){
     const id=active.id.replace('view-','');
-    const r={home:renderHome,todo:renderTodo,business:renderBiz,planning:renderPlan,corps:renderCorps,nutrition:renderNutrition,sport:renderSport,cfg:renderCfg};
+    const r={home:renderHome,todo:renderTodo,tracker:renderTracker,business:renderBiz,planning:renderPlan,corps:renderCorps,nutrition:renderNutrition,sport:renderSport,cfg:renderCfg};
     if(r[id])r[id]();
   }
 }
@@ -1340,6 +1345,7 @@ const DEFAULT_STATE={
   clients:0,
   checkDate:null,
   _ts:0,
+  journalEntries:{},
   todoHistory:[
     {date:"2026-03-13",done:16,total:19,lifeScore:84,items:[
       {id:"t2",label:"Méditation 30 min",cat:"mental",done:true},
@@ -1637,7 +1643,7 @@ function r90(){
 }
 
 // ═══ NAV ═══
-const TITLES={home:'Vue d\'ensemble',todo:'Checklist',planning:'Planning',nutrition:'Nutrition',sport:'Sport',corps:'Corps',business:'Business & Budget',journal:'Journal',cfg:'Config'};
+const TITLES={home:'Vue d\'ensemble',todo:'Checklist',tracker:'Tracker Complet',planning:'Planning',nutrition:'Nutrition',sport:'Sport',corps:'Corps',business:'Business & Budget',journal:'Journal',cfg:'Config'};
 function go(v,btn){
   document.querySelectorAll('.view').forEach(e=>e.classList.remove('active'));
   document.querySelectorAll('.nav-item').forEach(e=>e.classList.remove('active'));
@@ -1647,7 +1653,7 @@ function go(v,btn){
   document.getElementById('mob-title').textContent=TITLES[v]||v;
   sessionStorage.setItem('activeView',v);
   closeSB();
-  const r={home:renderHome,todo:renderTodo,business:renderBiz,planning:renderPlan,corps:renderCorps,nutrition:renderNutrition,sport:renderSport,journal:renderJournal,cfg:renderCfg};
+  const r={home:renderHome,todo:renderTodo,tracker:renderTracker,business:renderBiz,planning:renderPlan,corps:renderCorps,nutrition:renderNutrition,sport:renderSport,journal:renderJournal,cfg:renderCfg};
   if(r[v])r[v]();
 }
 function openSB(){document.getElementById('sidebar').classList.add('open');document.getElementById('ov').classList.add('open')}
@@ -1722,7 +1728,7 @@ function renderMiniTodos(){
 
 function renderHistory(){
   if(!S.todoHistory)S.todoHistory=[];
-  const hist=S.todoHistory.filter(h=>h.date!==td()).slice(-13);
+  const seen=new Set();const hist=S.todoHistory.filter(h=>{if(h.date===td()||seen.has(h.date))return false;seen.add(h.date);return true;}).slice(-13);
   const todayDone=S.todos?S.todos.filter(t=>t.done).length:0;
   const todayTotal=S.todos?S.todos.length:13;
   const todayLS=S.lifeScore||0;
@@ -1763,6 +1769,7 @@ function renderHistory(){
 }
 
 // ═══ WEEKLY TRACKER ═══
+function renderTracker(){renderWeeklyTracker();}
 function renderWeeklyTracker(){
   const el=document.getElementById('weekly-tracker');
   if(!el)return;
@@ -2887,8 +2894,7 @@ function renderJournal(dir=''){
   const dayNum=d.getDate();
   const monthName=MONTHS_FR[d.getMonth()];
   const isToday=dateKey===td();
-  
-  // Update picker & label
+
   const picker=document.getElementById('journal-picker');
   if(picker){picker.value=dateKey;picker.max=td();}
   const label=document.getElementById('journal-label');
@@ -2896,136 +2902,111 @@ function renderJournal(dir=''){
     label.textContent=isToday?'Aujourd\'hui':`${dayName} ${dayNum} ${monthName}`;
     label.classList.toggle('today',isToday);
   }
-  
+
   const animClass=dir==='right'?'day-slide':dir==='left'?'day-slide-left':'';
-  
-  // Get data for that day
+
+  // Get journal entry for this date
+  if(!S.journalEntries)S.journalEntries={};
+  const entry=S.journalEntries[dateKey]||{mood:null,gratitudes:'',braindump:'',priorities:''};
+
+  // Also get todoHistory for context
   const hist=S.todoHistory&&S.todoHistory.find(h=>h.date===dateKey);
-  const nc=(S.nutritionChecks||{})[dateKey]||{};
-  const sc=(S.sportChecks||{})[dateKey]||{};
-  
-  // Calculate day of week for sport program
-  const dow=(d.getDay()+6)%7;
-  const prog=SPORT_PROG[dow];
-  
+  const todayDone=isToday&&S.todos?S.todos.filter(t=>t.done).length:0;
+  const todayTotal=isToday&&S.todos?S.todos.length:0;
+  const ls=isToday?(S.lifeScore||0):(hist?hist.lifeScore||0:0);
+  const done=isToday?todayDone:(hist?hist.done:0);
+  const total=isToday?todayTotal:(hist?hist.total:0);
+  const pct=total?Math.round(done/total*100):0;
+
   let h=`<div class="${animClass}">`;
-  
-  // Life Score for that day
-  const ls=hist&&hist.lifeScore?hist.lifeScore:0;
-  const todosDone=hist?hist.done:0;
-  const todosTotal=hist?hist.total:0;
-  const todoPct=todosTotal?Math.round(todosDone/todosTotal*100):0;
-  
-  h+=`<div class="card gap" style="margin-bottom:14px">
+
+  // Life Score summary bar
+  h+=`<div class="card gap" style="margin-bottom:16px">
     <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap">
       <div style="display:flex;flex-direction:column;align-items:center">
         <div style="font-size:32px;font-weight:800;color:var(--accent)">${ls}</div>
-        <div style="font-family:var(--mono);font-size:9px;color:var(--muted)">LIFE SCORE</div>
+        <div style="font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px">Life Score</div>
       </div>
       <div style="flex:1;min-width:120px">
         <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
-          <span style="font-family:var(--mono);font-size:11px;color:var(--muted)">Checklist</span>
-          <span style="font-family:var(--mono);font-size:11px;font-weight:700;color:${todoPct>=70?'var(--accent)':todoPct>=40?'var(--orange)':'var(--red)'}">${todosDone}/${todosTotal} · ${todoPct}%</span>
+          <span style="font-size:11px;color:var(--muted)">Checklist</span>
+          <span style="font-size:11px;font-weight:700;color:${pct>=70?'var(--accent)':pct>=40?'var(--orange)':'var(--red)'}">${done}/${total} · ${pct}%</span>
         </div>
-        <div style="height:6px;background:var(--glass3);border-radius:99px;overflow:hidden">
-          <div style="height:100%;width:${todoPct}%;background:var(--accent);border-radius:99px;transition:width .3s"></div>
+        <div style="height:6px;background:rgba(255,255,255,.06);border-radius:99px;overflow:hidden">
+          <div style="height:100%;width:${pct}%;background:var(--accent);border-radius:99px;transition:width .3s"></div>
         </div>
       </div>
     </div>
   </div>`;
-  
-  // Checklist
-  h+=`<div class="card gap" style="margin-bottom:14px">
-    <div class="card-title">✓ Checklist</div>`;
-  if(hist&&hist.items&&hist.items.length){
-    hist.items.forEach(t=>{
-      h+=`<div class="ci ${t.done?'done':''}" style="cursor:default;pointer-events:none">
-        <div class="ci-box"></div>
-        <span class="ci-label">${t.label}</span>
-        <span class="ci-cat">${t.cat||''}</span>
-      </div>`;
-    });
-  } else {
-    h+=`<div style="font-size:13px;color:var(--muted);padding:12px 0">Aucune donnée pour ce jour.</div>`;
-  }
-  h+=`</div>`;
-  
-  // Sport
-  h+=`<div class="card gap" style="margin-bottom:14px">
-    <div class="card-title">🏋 Sport — ${prog.type||prog.day}</div>`;
-  if(prog.rest){
-    h+=`<div style="font-size:14px;color:var(--muted);padding:12px 0;text-align:center">😴 Jour de repos</div>`;
-  } else {
-    const warmupIds=prog.warmup.map((_,i)=>'w'+i);
-    const stretchIds=(prog.stretch||[]).map((_,i)=>'str'+i);
-    let exoIds=[];
-    if(prog.tours){for(let t=1;t<=prog.tours;t++)prog.exos.forEach(e=>exoIds.push(e.id+'-t'+t));}
-    else exoIds=prog.exos.map(e=>e.id);
-    const allIds=[...warmupIds,...exoIds,...stretchIds];
-    const doneCnt=allIds.filter(id=>sc[id]).length;
-    const sportPct=allIds.length?Math.round(doneCnt/allIds.length*100):0;
-    
-    h+=`<div style="font-family:var(--mono);font-size:11px;color:var(--muted);margin-bottom:10px">${doneCnt}/${allIds.length} · ${sportPct}%</div>`;
-    
-    if(prog.warmup.length){
-      h+=`<div style="font-size:11px;font-weight:700;color:var(--orange);margin:8px 0 4px">🔥 Échauffement</div>`;
-      prog.warmup.forEach((w,i)=>{
-        const id='w'+i;const done=!!sc[id];
-        h+=`<div class="exo-row" style="pointer-events:none"><div class="exo-check ${done?'done':''}"></div><span class="exo-label ${done?'done':''}">${w}</span></div>`;
-      });
-    }
-    
-    if(prog.tours){
-      for(let t=1;t<=prog.tours;t++){
-        h+=`<div style="font-size:11px;font-weight:700;color:var(--orange);margin:8px 0 4px">🔁 Tour ${t}/${prog.tours}</div>`;
-        prog.exos.forEach(e=>{
-          const id=e.id+'-t'+t;const done=!!sc[id];
-          h+=`<div class="exo-row" style="pointer-events:none"><div class="exo-check ${done?'done':''}"></div><span class="exo-label ${done?'done':''}">${e.l}</span></div>`;
-        });
-      }
-    } else {
-      h+=`<div style="font-size:11px;font-weight:700;color:var(--orange);margin:8px 0 4px">💪 Exercices</div>`;
-      prog.exos.forEach(e=>{
-        const done=!!sc[e.id];
-        h+=`<div class="exo-row" style="pointer-events:none"><div class="exo-check ${done?'done':''}"></div><span class="exo-label ${done?'done':''}">${e.l}</span></div>`;
-      });
-    }
-    
-    if(prog.stretch&&prog.stretch.length){
-      h+=`<div style="font-size:11px;font-weight:700;color:var(--green);margin:8px 0 4px">🧘 Étirements</div>`;
-      prog.stretch.forEach((s,i)=>{
-        const id='str'+i;const done=!!sc[id];
-        h+=`<div class="exo-row" style="pointer-events:none"><div class="exo-check ${done?'done':''}"></div><span class="exo-label ${done?'done':''}">${s}</span></div>`;
-      });
-    }
-  }
-  h+=`</div>`;
-  
-  // Nutrition
-  const MEALS=[
-    {key:'breakfast',emoji:'🌅',label:'Petit-déjeuner'},
-    {key:'lunch',emoji:'☀️',label:'Déjeuner'},
-    {key:'snack',emoji:'🍎',label:'Collation'},
-    {key:'dinner',emoji:'🌙',label:'Dîner'}
+
+  // Main journal card
+  h+=`<div class="card" style="border-radius:24px;padding:28px">`;
+
+  // Mood selector
+  const moods=[
+    {id:'good',emoji:'😊',color:'#4ade80',bg:'rgba(74,222,128,.1)'},
+    {id:'neutral',emoji:'😐',color:'#fb923c',bg:'rgba(251,146,60,.1)'},
+    {id:'bad',emoji:'😞',color:'#f87171',bg:'rgba(248,113,113,.1)'}
   ];
-  const mealsDone=MEALS.filter(m=>{const v=nc[m.key];return v!==false&&v!==undefined&&v!==null;}).length;
-  
-  h+=`<div class="card gap">
-    <div class="card-title">🍽 Nutrition</div>
-    <div style="font-family:var(--mono);font-size:11px;color:var(--muted);margin-bottom:10px">${mealsDone}/4 repas</div>`;
-  MEALS.forEach(m=>{
-    const v=nc[m.key];
-    const done=v!==false&&v!==undefined&&v!==null;
-    h+=`<div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border)">
-      <span style="font-size:18px">${m.emoji}</span>
-      <span style="flex:1;font-size:13px;${done?'':'color:var(--muted)'}">${m.label}</span>
-      <span style="font-family:var(--mono);font-size:11px;color:${done?'var(--accent)':'var(--muted)'}">${done?'✓':'—'}</span>
-    </div>`;
+  h+=`<div style="margin-bottom:28px">
+    <div class="label-up" style="margin-bottom:12px">Humeur du jour</div>
+    <div style="display:flex;gap:12px">`;
+  moods.forEach(m=>{
+    const sel=entry.mood===m.id;
+    h+=`<button onclick="setJournalMood('${m.id}')" style="width:56px;height:56px;border-radius:16px;border:2px solid ${sel?'var(--accent)':'var(--border)'};background:${sel?m.bg:'transparent'};cursor:pointer;font-size:28px;display:flex;align-items:center;justify-content:center;transition:all .2s">${m.emoji}</button>`;
   });
+  h+=`</div></div>`;
+
+  // Priorities
+  h+=`<div style="margin-bottom:28px">
+    <div class="label-up" style="margin-bottom:12px">2 Priorites du jour</div>
+    <textarea id="journal-priorities" rows="3" placeholder="1. ...\n2. ..." style="background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:12px;padding:14px 16px;color:var(--text);font-family:var(--font);font-size:14px;outline:none;width:100%;resize:vertical;line-height:1.6" ${!isToday?'disabled style="opacity:.6"':''}>${entry.priorities||''}</textarea>
+  </div>`;
+
+  // Gratitudes
+  h+=`<div style="margin-bottom:28px">
+    <div class="label-up" style="margin-bottom:12px">3 Gratitudes</div>
+    <textarea id="journal-gratitudes" rows="4" placeholder="1. Je suis reconnaissant pour...\n2. ...\n3. ..." style="background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:12px;padding:14px 16px;color:var(--text);font-family:var(--font);font-size:14px;outline:none;width:100%;resize:vertical;line-height:1.6" ${!isToday?'disabled style="opacity:.6"':''}>${entry.gratitudes||''}</textarea>
+  </div>`;
+
+  // Brain Dump
+  h+=`<div style="margin-bottom:28px">
+    <div class="label-up" style="margin-bottom:12px">Brain Dump (Vide-tete)</div>
+    <textarea id="journal-braindump" rows="6" placeholder="Ecris tout ce qui te passe par la tete..." style="background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:12px;padding:14px 16px;color:var(--text);font-family:var(--font);font-size:14px;outline:none;width:100%;resize:vertical;line-height:1.6" ${!isToday?'disabled style="opacity:.6"':''}>${entry.braindump||''}</textarea>
+  </div>`;
+
+  // Save button
+  if(isToday){
+    h+=`<div style="padding-top:16px;border-top:1px solid var(--border);display:flex;justify-content:flex-end">
+      <button class="btn" onclick="saveJournalEntry()" style="border-radius:12px;padding:12px 28px;font-size:14px">💾 Enregistrer l'entree</button>
+    </div>`;
+  }
+
   h+=`</div>`;
-  
   h+=`</div>`;
+
   document.getElementById('journal-content').innerHTML=h;
+}
+function setJournalMood(mood){
+  const dateKey=getJournalDateStr();
+  if(dateKey!==td())return;
+  if(!S.journalEntries)S.journalEntries={};
+  if(!S.journalEntries[dateKey])S.journalEntries[dateKey]={mood:null,gratitudes:'',braindump:'',priorities:''};
+  S.journalEntries[dateKey].mood=mood;
+  save();renderJournal();
+}
+function saveJournalEntry(){
+  const dateKey=td();
+  if(!S.journalEntries)S.journalEntries={};
+  if(!S.journalEntries[dateKey])S.journalEntries[dateKey]={mood:null,gratitudes:'',braindump:'',priorities:''};
+  const g=document.getElementById('journal-gratitudes');
+  const b=document.getElementById('journal-braindump');
+  const p=document.getElementById('journal-priorities');
+  if(g)S.journalEntries[dateKey].gratitudes=g.value;
+  if(b)S.journalEntries[dateKey].braindump=b.value;
+  if(p)S.journalEntries[dateKey].priorities=p.value;
+  save();
+  const btn=event.target;btn.textContent='✓ Sauvegarde !';setTimeout(()=>{btn.innerHTML='💾 Enregistrer l\'entree';},1500);
 }
 
 // ═══ AUTO-CHECKS ═══
