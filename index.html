@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="fr" data-theme="dark" data-accent="lime">
+<html lang="fr" data-theme="dark" data-accent="violet">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
@@ -21,9 +21,9 @@
   --text2:rgba(255,255,255,0.7);
   --muted:rgba(255,255,255,0.35);
   --muted2:rgba(255,255,255,0.15);
-  --accent:#c8ee00;
-  --accent-rgb:200,238,0;
-  --accent-glow:rgba(200,238,0,0.12);
+  --accent:#8B5CF6;
+  --accent-rgb:139,92,246;
+  --accent-glow:rgba(139,92,246,0.15);
   --green:#4ade80;
   --orange:#fb923c;
   --red:#f87171;
@@ -118,7 +118,7 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--f
 .nav{flex:1;padding:4px 10px;display:flex;flex-direction:column;gap:2px}
 .nav-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:var(--radius-sm);cursor:pointer;font-size:13px;color:var(--muted);font-weight:600;transition:all .15s;border:none;background:none;width:100%;text-align:left;-webkit-tap-highlight-color:transparent;touch-action:manipulation;position:relative}
 .nav-item:hover{color:var(--text);background:rgba(255,255,255,.04)}
-.nav-item.active{background:rgba(var(--accent-rgb),.12);color:var(--accent);font-weight:700}
+.nav-item.active{background:var(--accent);color:#fff;font-weight:700;border-radius:10px}
 .nav-icon{font-size:15px;width:22px;text-align:center;flex-shrink:0}
 
 /* ── SIDEBAR FOOTER ── */
@@ -453,6 +453,7 @@ hr{border:none;border-top:1px solid var(--border);margin:16px 0}
     <button class="nav-item active" onclick="go('home',this)" data-view="home"><span class="nav-icon">⚡</span>Vue d'ensemble</button>
     <button class="nav-item" onclick="go('todo',this)" data-view="todo"><span class="nav-icon">✓</span>Checklist</button>
     <button class="nav-item" onclick="go('planning',this)" data-view="planning"><span class="nav-icon">📅</span>Planning</button>
+    <button class="nav-item" onclick="go('planning',this)" data-view="planning"><span class="nav-icon">📊</span>Tracker Complet</button>
     <button class="nav-item" onclick="go('nutrition',this)" data-view="nutrition"><span class="nav-icon">🍽</span>Nutrition</button>
     <button class="nav-item" onclick="go('sport',this)" data-view="sport"><span class="nav-icon">🏋</span>Sport</button>
     <button class="nav-item" onclick="go('corps',this)" data-view="corps"><span class="nav-icon">💪</span>Corps</button>
@@ -470,9 +471,9 @@ hr{border:none;border-top:1px solid var(--border);margin:16px 0}
       </div>
       <div class="sb-footer-label">Accent</div>
       <div class="accent-dots" id="sb-accent-dots">
-        <div class="accent-dot active" data-accent="lime" style="background:#c8ee00" onclick="setAccent('lime')" title="Lime"></div>
+        <div class="accent-dot" data-accent="lime" style="background:#c8ee00" onclick="setAccent('lime')" title="Lime"></div>
         <div class="accent-dot" data-accent="blue" style="background:#60a5fa" onclick="setAccent('blue')" title="Blue"></div>
-        <div class="accent-dot" data-accent="violet" style="background:#8B5CF6" onclick="setAccent('violet')" title="Violet"></div>
+        <div class="accent-dot active" data-accent="violet" style="background:#8B5CF6" onclick="setAccent('violet')" title="Violet"></div>
         <div class="accent-dot" data-accent="orange" style="background:#fb923c" onclick="setAccent('orange')" title="Orange"></div>
         <div class="accent-dot" data-accent="rose" style="background:#f472b6" onclick="setAccent('rose')" title="Rose"></div>
       </div>
