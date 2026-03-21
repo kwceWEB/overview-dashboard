@@ -384,6 +384,26 @@ hr{border:none;border-top:1px solid var(--border);margin:16px 0}
 .shopping-list{background:var(--glass);border:1px solid var(--border);border-radius:var(--radius);padding:14px 18px;margin-top:10px;font-size:13px;line-height:2;display:none}
 .shopping-list.open{display:block}
 
+/* ── NUTRITION GRID ── */
+.nutri-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.nutri-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px;position:relative;transition:all .25s;cursor:pointer}
+.nutri-card:hover{border-color:rgba(255,255,255,.12)}
+.nutri-card.checked{border-color:rgba(var(--accent-rgb),.4);background:rgba(var(--accent-rgb),.04)}
+.nutri-card-time{font-size:11px;color:var(--muted);font-weight:500}
+.nutri-card-name{font-size:18px;font-weight:700;margin:6px 0 10px}
+.nutri-card-opts{display:flex;flex-direction:column;gap:4px;margin-bottom:12px}
+.nutri-card-opt{font-size:12px;color:var(--text2);display:flex;align-items:flex-start;gap:6px;cursor:pointer;padding:4px 0;border-radius:6px;transition:all .15s}
+.nutri-card-opt::before{content:'';width:5px;height:5px;border-radius:50%;background:var(--orange);flex-shrink:0;margin-top:5px}
+.nutri-card-opt.selected{color:var(--accent);font-weight:600}
+.nutri-card-opt.selected::before{background:var(--accent)}
+.nutri-card-footer{display:flex;justify-content:space-between;align-items:center;font-size:11px;color:var(--muted);margin-top:auto}
+.nutri-card-check{position:absolute;top:16px;right:16px;width:26px;height:26px;border:1.5px solid rgba(255,255,255,.15);border-radius:50%;display:flex;align-items:center;justify-content:center;transition:all .25s}
+.nutri-card.checked .nutri-card-check{background:var(--accent);border-color:var(--accent)}
+.nutri-card.checked .nutri-card-check::after{content:'\2713';font-size:13px;color:#fff;font-weight:900}
+.nutri-protein-bar{display:flex;align-items:center;gap:16px;padding:16px 20px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:16px}
+@media(max-width:768px){.nutri-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:420px){.nutri-grid{grid-template-columns:1fr}}
+
 /* ══════════════════════════════════════════════════════════════
    SPORT
    ══════════════════════════════════════════════════════════════ */
@@ -517,16 +537,15 @@ hr{border:none;border-top:1px solid var(--border);margin:16px 0}
   </div>
 
   <nav class="nav">
-    <button class="nav-item active" onclick="go('home',this)" data-view="home"><span class="nav-icon">🏠</span>Vue d'ensemble</button>
-    <button class="nav-item" onclick="go('todo',this)" data-view="todo"><span class="nav-icon">✅</span>Checklist</button>
-    <button class="nav-item" onclick="go('tracker',this)" data-view="tracker"><span class="nav-icon">📊</span>Tracker Complet</button>
-    <button class="nav-item" onclick="go('sport',this)" data-view="sport"><span class="nav-icon">🏋</span>Sport</button>
-    <button class="nav-item" onclick="go('nutrition',this)" data-view="nutrition"><span class="nav-icon">🍎</span>Nutrition</button>
-    <button class="nav-item" onclick="go('planning',this)" data-view="planning"><span class="nav-icon">📅</span>Planning</button>
-    <button class="nav-item" onclick="go('corps',this)" data-view="corps"><span class="nav-icon">💪</span>Corps</button>
-    <button class="nav-item" onclick="go('business',this)" data-view="business"><span class="nav-icon">🏢</span>Business</button>
-    <button class="nav-item" onclick="go('journal',this)" data-view="journal"><span class="nav-icon">📓</span>Journal</button>
-    <button class="nav-item" onclick="go('cfg',this)" data-view="cfg"><span class="nav-icon">⚙️</span>Config</button>
+    <button class="nav-item active" onclick="go('home',this)" data-view="home"><span class="nav-icon">◉</span>Vue d'ensemble</button>
+    <button class="nav-item" onclick="go('todo',this)" data-view="todo"><span class="nav-icon">☐</span>Checklist</button>
+    <button class="nav-item" onclick="go('tracker',this)" data-view="tracker"><span class="nav-icon">▦</span>Tracker</button>
+    <button class="nav-item" onclick="go('sport',this)" data-view="sport"><span class="nav-icon">↗</span>Sport</button>
+    <button class="nav-item" onclick="go('nutrition',this)" data-view="nutrition"><span class="nav-icon">◎</span>Nutrition</button>
+    <button class="nav-item" onclick="go('planning',this)" data-view="planning"><span class="nav-icon">▤</span>Planning</button>
+    <button class="nav-item" onclick="go('business',this)" data-view="business"><span class="nav-icon">△</span>Business</button>
+    <button class="nav-item" onclick="go('journal',this)" data-view="journal"><span class="nav-icon">▢</span>Journal</button>
+    <button class="nav-item" onclick="go('cfg',this)" data-view="cfg"><span class="nav-icon">⟐</span>Config</button>
   </nav>
 
   <div class="sidebar-footer">
@@ -536,12 +555,13 @@ hr{border:none;border-top:1px solid var(--border);margin:16px 0}
       <span class="tc-mode" id="sb-tc-mode">Dark</span>
     </div>
     <div class="sb-footer-label">Accent</div>
-    <div class="accent-dots" id="sb-accent-dots">
+    <div class="accent-dots" id="sb-accent-dots" style="align-items:center">
       <div class="accent-dot" data-accent="lime" style="background:#c8ee00" onclick="setAccent('lime')" title="Lime"></div>
       <div class="accent-dot" data-accent="blue" style="background:#60a5fa" onclick="setAccent('blue')" title="Blue"></div>
       <div class="accent-dot active" data-accent="violet" style="background:#8B5CF6" onclick="setAccent('violet')" title="Violet"></div>
       <div class="accent-dot" data-accent="orange" style="background:#fb923c" onclick="setAccent('orange')" title="Orange"></div>
       <div class="accent-dot" data-accent="rose" style="background:#f472b6" onclick="setAccent('rose')" title="Rose"></div>
+      <input type="color" id="sb-accent-color-picker" value="#8B5CF6" oninput="setCustomAccent(this.value)" style="width:20px;height:20px;border:none;background:none;cursor:pointer;padding:0;border-radius:50%;overflow:hidden" title="Custom">
     </div>
     <div class="day-pill">
       <div class="dp-label">Defi 90 jours</div>
@@ -727,18 +747,6 @@ hr{border:none;border-top:1px solid var(--border);margin:16px 0}
       </div>
     </div>
 
-    <!-- CORPS MINI -->
-    <div class="g2 gap">
-      <div class="card">
-        <div class="card-label">Poids actuel</div>
-        <div class="card-big" id="h-poids">—</div>
-        <div class="card-sub">kg · Obj : <span id="h-poids-obj">—</span>kg</div>
-      </div>
-      <div class="card">
-        <div class="card-label">Weekly Tracker</div>
-        <span class="score-badge" id="wt-streak">—</span>
-      </div>
-    </div>
 
     <!-- HIDDEN COMPAT ELEMENTS -->
     <div style="display:none">
@@ -909,52 +917,6 @@ hr{border:none;border-top:1px solid var(--border);margin:16px 0}
   </div>
 
   <!-- ═══════════════════════════════════════════════════════════
-       CORPS
-       ═══════════════════════════════════════════════════════════ -->
-  <div class="view" id="view-corps">
-    <div class="ph">
-      <div class="ph-title">Corps &amp; Sante</div>
-      <div class="ph-sub">La machine qui supporte ton esprit.</div>
-    </div>
-    <div class="g2 gap">
-      <div class="card">
-        <div class="card-label">Poids actuel</div>
-        <div class="card-big c-accent" id="c-poids">—</div>
-        <div class="card-sub">kg · Obj : <span id="c-poids-obj">—</span>kg</div>
-        <div class="irow">
-          <input type="number" id="inp-poids" placeholder="kg" step="0.1">
-          <input type="date" id="inp-poids-date" style="max-width:130px">
-          <button class="btn btn-sm" onclick="logPoids()">Log</button>
-        </div>
-      </div>
-      <div class="card">
-        <div class="card-label">Seances cette semaine</div>
-        <div class="card-big c-blue" id="c-seances">0</div>
-        <div class="card-sub">/ 5 objectif</div>
-        <div class="prog-wrap"><div class="prog" id="c-seance-p" style="width:0%;background:var(--blue)"></div></div>
-      </div>
-    </div>
-    <div class="slabel">Logger une seance</div>
-    <div class="card gap">
-      <div class="irow" style="margin-bottom:8px">
-        <label style="font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;white-space:nowrap;flex-shrink:0;font-weight:500">Date :</label>
-        <input type="date" id="inp-seance-date" style="max-width:150px">
-      </div>
-      <div id="seance-btns-wrap" style="display:flex;flex-wrap:wrap;gap:8px"></div>
-    </div>
-    <div class="g2">
-      <div class="card">
-        <div class="card-label">Historique poids</div>
-        <div style="height:140px"><canvas id="ch-poids"></canvas></div>
-      </div>
-      <div class="card">
-        <div class="card-label">Historique seances</div>
-        <div class="log-list" id="seance-log"></div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ═══════════════════════════════════════════════════════════
        NUTRITION
        ═══════════════════════════════════════════════════════════ -->
   <div class="view" id="view-nutrition">
@@ -1003,15 +965,19 @@ hr{border:none;border-top:1px solid var(--border);margin:16px 0}
         <span style="font-size:16px">🎨</span>
         <div>
           <div style="font-size:16px;font-weight:700">Couleur d'accentuation</div>
-          <div class="card-sub" style="margin-top:2px">Clique sur un preset ou entre un code hex.</div>
+          <div class="card-sub" style="margin-top:2px">Clique sur un preset ou choisis une couleur personnalisée.</div>
         </div>
       </div>
-      <div style="display:flex;gap:14px;flex-wrap:wrap;margin-bottom:16px" id="cfg-accent-dots">
+      <div style="display:flex;gap:14px;flex-wrap:wrap;align-items:center;margin-bottom:16px" id="cfg-accent-dots">
         <div class="accent-dot" data-accent="lime" style="background:#c8ee00;width:28px;height:28px" onclick="setAccent('lime')" title="Lime"></div>
         <div class="accent-dot" data-accent="blue" style="background:#60a5fa;width:28px;height:28px" onclick="setAccent('blue')" title="Blue"></div>
         <div class="accent-dot" data-accent="violet" style="background:#8B5CF6;width:28px;height:28px" onclick="setAccent('violet')" title="Violet"></div>
         <div class="accent-dot" data-accent="orange" style="background:#fb923c;width:28px;height:28px" onclick="setAccent('orange')" title="Orange"></div>
         <div class="accent-dot" data-accent="rose" style="background:#f472b6;width:28px;height:28px" onclick="setAccent('rose')" title="Rose"></div>
+        <div style="display:flex;align-items:center;gap:8px;margin-left:8px">
+          <input type="color" id="accent-color-picker" value="#8B5CF6" oninput="setCustomAccent(this.value)" style="width:28px;height:28px;border:none;background:none;cursor:pointer;padding:0;border-radius:50%;overflow:hidden">
+          <input type="text" id="accent-hex-input" value="#8B5CF6" maxlength="7" oninput="if(this.value.match(/^#[0-9a-fA-F]{6}$/))setCustomAccent(this.value)" style="width:80px;font-family:var(--mono);font-size:12px;padding:6px 10px;background:var(--glass2);border:1px solid var(--border);border-radius:8px;color:var(--text)">
+        </div>
       </div>
     </div>
     <!-- Date de debut -->
@@ -1129,13 +1095,40 @@ function toggleTheme(){
 function setAccent(accent){
   document.documentElement.setAttribute('data-accent',accent);
   localStorage.setItem('life_accent',accent);
+  localStorage.removeItem('life_accent_custom');
+  document.documentElement.style.removeProperty('--accent');
+  document.documentElement.style.removeProperty('--accent-rgb');
+  document.documentElement.style.removeProperty('--accent-glow');
   document.querySelectorAll('.accent-dot').forEach(d=>d.classList.toggle('active',d.dataset.accent===accent));
+  const presetColors={lime:'#c8ee00',blue:'#60a5fa',violet:'#8B5CF6',orange:'#fb923c',rose:'#f472b6'};
+  const hex=presetColors[accent]||'#8B5CF6';
+  const picker=document.getElementById('accent-color-picker');if(picker)picker.value=hex;
+  const sbPicker=document.getElementById('sb-accent-color-picker');if(sbPicker)sbPicker.value=hex;
+  const hexInput=document.getElementById('accent-hex-input');if(hexInput)hexInput.value=hex;
+}
+function setCustomAccent(hex){
+  document.documentElement.removeAttribute('data-accent');
+  document.documentElement.style.setProperty('--accent',hex);
+  const r=parseInt(hex.slice(1,3),16),g=parseInt(hex.slice(3,5),16),b=parseInt(hex.slice(5,7),16);
+  document.documentElement.style.setProperty('--accent-rgb',`${r},${g},${b}`);
+  document.documentElement.style.setProperty('--accent-glow',`rgba(${r},${g},${b},.15)`);
+  localStorage.setItem('life_accent_custom',hex);
+  localStorage.setItem('life_accent','custom');
+  document.querySelectorAll('.accent-dot').forEach(d=>d.classList.remove('active'));
+  const picker=document.getElementById('accent-color-picker');if(picker)picker.value=hex;
+  const sbPicker=document.getElementById('sb-accent-color-picker');if(sbPicker)sbPicker.value=hex;
+  const hexInput=document.getElementById('accent-hex-input');if(hexInput)hexInput.value=hex;
 }
 function updateAppearanceUI(){
   const theme=document.documentElement.getAttribute('data-theme')||'dark';
-  const accent=document.documentElement.getAttribute('data-accent')||'lime';
   applyTheme(theme);
-  document.querySelectorAll('.accent-dot').forEach(d=>d.classList.toggle('active',d.dataset.accent===accent));
+  const savedAccent=localStorage.getItem('life_accent');
+  if(savedAccent==='custom'){
+    const customHex=localStorage.getItem('life_accent_custom');
+    if(customHex)setCustomAccent(customHex);
+  } else {
+    setAccent(savedAccent||'violet');
+  }
 }
 
 // ═══ FIREBASE SYNC ═══
@@ -1147,7 +1140,7 @@ function reRenderActive(){
   const active=document.querySelector('.view.active');
   if(active){
     const id=active.id.replace('view-','');
-    const r={home:renderHome,todo:renderTodo,tracker:renderTracker,business:renderBiz,planning:renderPlan,corps:renderCorps,nutrition:renderNutrition,sport:renderSport,cfg:renderCfg};
+    const r={home:renderHome,todo:renderTodo,tracker:renderTracker,business:renderBiz,planning:renderPlan,nutrition:renderNutrition,sport:renderSport,cfg:renderCfg};
     if(r[id])r[id]();
   }
 }
@@ -1288,9 +1281,7 @@ const DAILY=[
   {id:'t7',label:'2L eau minimum',done:false,cat:'corps',group:'corps'},
   {id:'t8',label:'Lumière du jour 15 min',done:false,cat:'corps',group:'corps'},
   {id:'t20',label:'150g protéines',done:false,cat:'corps',group:'corps'},
-  {id:'t21',label:'Electrolytes',done:false,cat:'corps',group:'corps'},
   {id:'t14',label:'Créatine',done:false,cat:'corps',group:'corps'},
-  {id:'t15',label:'Whey',done:false,cat:'corps',group:'corps'},
   {id:'t16',label:'Oméga 3',done:false,cat:'corps',group:'corps'},
   // BUSINESS
   {id:'t3',label:'Travail Agence',done:false,cat:'business',group:'business'},
@@ -1643,7 +1634,7 @@ function r90(){
 }
 
 // ═══ NAV ═══
-const TITLES={home:'Vue d\'ensemble',todo:'Checklist',tracker:'Tracker Complet',planning:'Planning',nutrition:'Nutrition',sport:'Sport',corps:'Corps',business:'Business & Budget',journal:'Journal',cfg:'Config'};
+const TITLES={home:'Vue d\'ensemble',todo:'Checklist',tracker:'Tracker',planning:'Planning',nutrition:'Nutrition',sport:'Sport',business:'Business & Budget',journal:'Journal',cfg:'Config'};
 function go(v,btn){
   document.querySelectorAll('.view').forEach(e=>e.classList.remove('active'));
   document.querySelectorAll('.nav-item').forEach(e=>e.classList.remove('active'));
@@ -1653,7 +1644,7 @@ function go(v,btn){
   document.getElementById('mob-title').textContent=TITLES[v]||v;
   sessionStorage.setItem('activeView',v);
   closeSB();
-  const r={home:renderHome,todo:renderTodo,tracker:renderTracker,business:renderBiz,planning:renderPlan,corps:renderCorps,nutrition:renderNutrition,sport:renderSport,journal:renderJournal,cfg:renderCfg};
+  const r={home:renderHome,todo:renderTodo,tracker:renderTracker,business:renderBiz,planning:renderPlan,nutrition:renderNutrition,sport:renderSport,journal:renderJournal,cfg:renderCfg};
   if(r[v])r[v]();
 }
 function openSB(){document.getElementById('sidebar').classList.add('open');document.getElementById('ov').classList.add('open')}
@@ -1707,8 +1698,6 @@ function renderHome(){
   document.getElementById('h-clients').textContent=S.clients;
   document.getElementById('h-prospects').textContent=S.prospects[td()]||0;
   const lp=S.poids[S.poids.length-1];
-  document.getElementById('h-poids').textContent=lp?lp.val:'—';
-  document.getElementById('h-poids-obj').textContent=S.poidsObj;
   const ls=S.seances[S.seances.length-1];
   document.getElementById('h-seance').textContent=ls?ls.type:'—';
   document.getElementById('h-seance-d').textContent=ls?ls.date:'Aucune séance';
@@ -1741,7 +1730,7 @@ function renderHistory(){
     const offset=circ*(1-pct/100);
     const isToday=h.date===td();
     const color=pct>=80?'var(--accent)':pct>=50?'var(--green)':pct>=20?'var(--orange)':'var(--red)';
-    const d=new Date(h.date);
+    const d=new Date(h.date+'T12:00');
     const dayName=DAYS[d.getDay()];
     const dayNum=h.date.slice(8);
     const ls=isToday?todayLS:(h.lifeScore||0);
@@ -1781,10 +1770,10 @@ function renderWeeklyTracker(){
   const todayItems=S.todos||[];
   const rows=todayItems.map(t=>({id:t.id,label:t.label,group:t.group||''}));
   const DAY_MON=['L','M','M','J','V','S','D'];
-  const circ=2*Math.PI*14;
+  const circ=2*Math.PI*17;
   let html='<table style="border-collapse:collapse;min-width:max-content;border-spacing:0">';
   html+='<thead><tr>';
-  html+=`<th style="position:sticky;left:0;z-index:6;background:var(--surface);min-width:120px;max-width:150px;padding:0 8px 10px 0;text-align:left;font-family:var(--mono);font-size:8px;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;font-weight:400"></th>`;
+  html+=`<th style="position:sticky;left:0;z-index:6;background:var(--surface);min-width:180px;max-width:200px;padding:0 8px 10px 0;text-align:left;font-family:var(--mono);font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;font-weight:400"></th>`;
   days.forEach(day=>{
     const isToday=day===today;
     const d=new Date(day+'T12:00');
@@ -1799,15 +1788,15 @@ function renderWeeklyTracker(){
     const color=pct>=80?'var(--accent)':pct>=60?'var(--green)':pct>=30?'var(--orange)':'var(--red)';
     const offset=applicable.length>0?circ*(1-pct/100):circ;
     const todayBorder=isToday?'outline:1px solid rgba(var(--accent-rgb),.35);outline-offset:-2px;border-radius:8px;background:rgba(var(--accent-rgb),.04);':'';
-    html+=`<th style="min-width:50px;text-align:center;padding:0 3px 8px;${todayBorder}">
-      <div style="display:flex;flex-direction:column;align-items:center;gap:1px">
-        <svg width="36" height="36" viewBox="0 0 36 36">
-          <circle cx="18" cy="18" r="14" fill="none" stroke="var(--glass3)" stroke-width="3"/>
-          <circle cx="18" cy="18" r="14" fill="none" stroke="${color}" stroke-width="3" stroke-dasharray="${circ.toFixed(2)}" stroke-dashoffset="${offset.toFixed(2)}" stroke-linecap="round" transform="rotate(-90 18 18)"/>
-          <text x="18" y="23" text-anchor="middle" font-size="11" font-weight="700" fill="${isToday?'var(--accent)':'var(--text2)'}">${letter}</text>
+    html+=`<th style="min-width:58px;text-align:center;padding:0 3px 8px;${todayBorder}">
+      <div style="display:flex;flex-direction:column;align-items:center;gap:2px">
+        <svg width="44" height="44" viewBox="0 0 44 44">
+          <circle cx="22" cy="22" r="17" fill="none" stroke="var(--glass3)" stroke-width="3"/>
+          <circle cx="22" cy="22" r="17" fill="none" stroke="${color}" stroke-width="3" stroke-dasharray="${circ.toFixed(2)}" stroke-dashoffset="${offset.toFixed(2)}" stroke-linecap="round" transform="rotate(-90 22 22)"/>
+          <text x="22" y="27" text-anchor="middle" font-size="13" font-weight="700" fill="${isToday?'var(--accent)':'var(--text2)'}">${letter}</text>
         </svg>
-        <span style="font-family:var(--mono);font-size:8px;color:var(--muted)">${dateNum}</span>
-        <span style="font-family:var(--mono);font-size:8px;color:${color}">${applicable.length>0?pct+'%':'—'}</span>
+        <span style="font-family:var(--mono);font-size:9px;color:var(--muted)">${dateNum}</span>
+        <span style="font-family:var(--mono);font-size:9px;color:${color}">${applicable.length>0?pct+'%':'—'}</span>
       </div>
     </th>`;
   });
@@ -1815,7 +1804,7 @@ function renderWeeklyTracker(){
   rows.forEach((row,rowIdx)=>{
       const isGroupSep=rowIdx>0&&rows[rowIdx-1].group!==row.group;
       const sepStyle=isGroupSep?'border-top:1.5px solid var(--glass3);':'border-top:1px solid var(--border1);';
-    html+=`<tr><td style="position:sticky;left:0;z-index:5;background:var(--surface);padding:5px 8px 5px 0;font-family:var(--mono);font-size:9px;color:var(--text2);text-transform:uppercase;letter-spacing:.3px;white-space:nowrap;max-width:150px;overflow:hidden;text-overflow:ellipsis;${sepStyle}" title="${row.label}">${row.label}</td>`;
+    html+=`<tr><td style="position:sticky;left:0;z-index:5;background:var(--surface);padding:5px 8px 5px 0;font-family:var(--mono);font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:.3px;white-space:nowrap;max-width:200px;overflow:hidden;text-overflow:ellipsis;${sepStyle}" title="${row.label}">${row.label}</td>`;
     days.forEach(day=>{
       const isToday=day===today;
       const d=new Date(day+'T12:00');
@@ -1831,10 +1820,10 @@ function renderWeeklyTracker(){
       if(excluded){
         cell=`<span style="font-family:var(--mono);font-size:9px;color:var(--border2)">—</span>`;
       } else if(item&&item.done){
-        cell=`<div style="width:13px;height:13px;background:var(--accent);border-radius:3px;margin:0 auto;display:flex;align-items:center;justify-content:center;font-size:9px;color:#fff">✓</div>`;
+        cell=`<div style="width:16px;height:16px;background:var(--accent);border-radius:3px;margin:0 auto;display:flex;align-items:center;justify-content:center;font-size:10px;color:#fff">✓</div>`;
         onclick=isToday?`onclick="toggleTodo(${itemIdx},true)"`:`onclick="wtToggle('${day}','${row.id}','${row.label}','${row.group||''}')"`;
       } else {
-        cell=`<div style="width:13px;height:13px;border:1.5px solid var(--muted2);border-radius:3px;margin:0 auto;opacity:.35"></div>`;
+        cell=`<div style="width:16px;height:16px;border:1.5px solid var(--muted2);border-radius:3px;margin:0 auto;opacity:.35"></div>`;
         if(isToday&&itemIdx>=0){onclick=`onclick="toggleTodo(${itemIdx},true)"`;}
         else if(!isToday){onclick=`onclick="wtToggle('${day}','${row.id}','${row.label}','${row.group||''}')"`;};
       }
@@ -2706,50 +2695,78 @@ function renderNutrition(dir=''){
   const isCheat=nutriDay===2||nutriDay===6;
   const animClass=dir==='right'?'day-slide':dir==='left'?'day-slide-left':'';
 
+  // Protein data per meal
+  const MEAL_PROTEIN={breakfast:35,lunch:40,snack:20,dinner:40};
+  const meals=[
+    {id:'breakfast',...MEAL_DATA.breakfast,cal:'~450 kcal',prot:MEAL_PROTEIN.breakfast+'g prot'},
+    {id:'lunch',time:'12h30',name:isCheat?'Cheat Meal':'Déjeuner',isCheat,cal:isCheat?'— kcal':'~550 kcal',prot:MEAL_PROTEIN.lunch+'g prot'},
+    {id:'snack',...MEAL_DATA.snack,cal:'~250 kcal',prot:MEAL_PROTEIN.snack+'g prot'},
+    {id:'dinner',...MEAL_DATA.dinner,cal:'~500 kcal',prot:MEAL_PROTEIN.dinner+'g prot'}
+  ];
+
+  // Calculate protein progress
+  let protDone=0,protTotal=150;
+  meals.forEach(m=>{
+    const v=checks[m.id];
+    if(v!==false&&v!==undefined&&v!==null)protDone+=MEAL_PROTEIN[m.id];
+  });
+  const protPct=Math.min(100,Math.round(protDone/protTotal*100));
+  const ringR=20,ringC=2*Math.PI*ringR,ringOff=ringC*(1-protPct/100);
+
   let h=`<div class="day-nav">
     <button class="day-nav-btn" onclick="navNutri(-1)">←</button>
     <div class="day-nav-label${isToday?' today':''}">${DAYS_FR[nutriDay]}${isToday?' <span style="font-size:11px;font-weight:500;opacity:.55">· auj</span>':''}</div>
     <button class="day-nav-btn" onclick="navNutri(1)">→</button>
   </div><div class="${animClass}">`;
 
-  const meals=[
-    {id:'breakfast',...MEAL_DATA.breakfast},
-    {id:'lunch',time:'12h30',name:isCheat?'🍕 Cheat Meal':'Déjeuner',isCheat},
-    {id:'snack',...MEAL_DATA.snack},
-    {id:'dinner',...MEAL_DATA.dinner}
-  ];
+  // Protein summary bar
+  h+=`<div class="nutri-protein-bar">
+    <svg width="52" height="52" viewBox="0 0 52 52" style="transform:rotate(-90deg);flex-shrink:0">
+      <circle cx="26" cy="26" r="${ringR}" fill="none" stroke="rgba(255,255,255,.06)" stroke-width="4"/>
+      <circle cx="26" cy="26" r="${ringR}" fill="none" stroke="var(--accent)" stroke-width="4" stroke-linecap="round"
+        stroke-dasharray="${ringC.toFixed(1)}" stroke-dashoffset="${ringOff.toFixed(1)}" style="transition:stroke-dashoffset .6s"/>
+    </svg>
+    <div style="flex:1;min-width:0">
+      <div style="font-size:13px;font-weight:700;color:var(--text)">Protéines : ${protDone}g / ${protTotal}g</div>
+      <div style="font-size:11px;color:var(--muted);margin-top:2px">${protPct}% de l'objectif · ${meals.filter(m=>{const v=checks[m.id];return v!==false&&v!==undefined&&v!==null;}).length}/4 repas</div>
+    </div>
+  </div>`;
+
+  // 2x2 grid
+  h+=`<div class="nutri-grid">`;
   meals.forEach(meal=>{
     const selOpt=checks[meal.id];
     const done=(selOpt!==false&&selOpt!==undefined&&selOpt!==null);
-    h+=`<div class="meal-block"><div class="meal-header">
-      <span class="meal-time">${meal.time}</span>
-      <span class="meal-name">${meal.name}</span>
-      <div class="meal-check ${done?'done':''}"></div>
-    </div>`;
+    h+=`<div class="nutri-card ${done?'checked':''}">
+      <span class="nutri-card-time">${meal.time}</span>
+      <div class="nutri-card-check"></div>
+      <div class="nutri-card-name">${meal.name}</div>`;
+
     if(meal.isCheat){
-      h+=`<div class="cheat-badge" onclick="nutriToggleCheat('${dateKey}','${meal.id}')" style="cursor:pointer">${done?'✓ ':''}🍕 Cheat meal — libre ! ${done?'':'(tap pour cocher)'}</div>`;
+      h+=`<div class="nutri-card-opts">
+        <div class="nutri-card-opt ${done?'selected':''}" onclick="nutriToggleCheat('${dateKey}','${meal.id}')">Cheat meal — libre !</div>
+      </div>`;
     } else if(meal.id==='lunch'){
-      h+=`<div class="meal-options">`;
+      h+=`<div class="nutri-card-opts">`;
       LUNCH_PACKS.forEach((p,i)=>{
-        if(i>0)h+=`<div class="meal-or">ou</div>`;
         const sel=selOpt===i;
-        h+=`<div class="meal-option" onclick="nutriSelectOpt('${dateKey}','${meal.id}',${i})" style="cursor:pointer;${sel?'border-color:var(--accent);background:rgba(212,255,0,.06)':''}">${sel?'<b style="color:var(--accent)">✓ </b>':''}<b style="color:${sel?'var(--accent)':'rgba(212,255,0,.6)'};font-size:11px">${p.label}</b> — ${p.desc}</div>`;
+        h+=`<div class="nutri-card-opt ${sel?'selected':''}" onclick="nutriSelectOpt('${dateKey}','${meal.id}',${i})">${p.label} — ${p.desc}</div>`;
       });
       h+=`</div>`;
     } else {
-      h+=`<div class="meal-options">`;
-      const isBfast=meal.id==='breakfast';
+      h+=`<div class="nutri-card-opts">`;
       meal.options.forEach((o,i)=>{
-        if(i>0)h+=`<div class="meal-or">ou</div>`;
         const sel=selOpt===i;
-        const hint=isBfast&&i===0?' <span style="font-size:9px;opacity:.5">(→ créatine + whey)</span>':'';
-        h+=`<div class="meal-option" onclick="nutriSelectOpt('${dateKey}','${meal.id}',${i})" style="cursor:pointer;${sel?'border-color:var(--accent);background:rgba(212,255,0,.06)':''}">${sel?'<b style="color:var(--accent)">✓ </b>':''}${o}${hint}</div>`;
+        h+=`<div class="nutri-card-opt ${sel?'selected':''}" onclick="nutriSelectOpt('${dateKey}','${meal.id}',${i})">${o}</div>`;
       });
       h+=`</div>`;
     }
+    h+=`<div class="nutri-card-footer"><span>${meal.cal}</span><span style="color:var(--accent);font-weight:600">${meal.prot}</span></div>`;
     h+=`</div>`;
   });
-  h+=`<button class="shopping-btn" onclick="showShopping()">🛒 Liste de courses pour demain</button>
+  h+=`</div>`;
+
+  h+=`<button class="shopping-btn" onclick="showShopping()" style="margin-top:16px">Liste de courses pour demain</button>
   <div class="shopping-list" id="nutri-shopping"></div></div>`;
   document.getElementById('nutri-content').innerHTML=h;
 }
@@ -3044,9 +3061,19 @@ function syncAutoChecks(){
 // ═══ INIT ═══
 (()=>{
   const t=localStorage.getItem('life_theme')||'dark';
-  const a=localStorage.getItem('life_accent')||'lime';
   document.documentElement.setAttribute('data-theme',t);
-  document.documentElement.setAttribute('data-accent',a);
+  const savedAccent=localStorage.getItem('life_accent');
+  if(savedAccent==='custom'){
+    const customHex=localStorage.getItem('life_accent_custom');
+    if(customHex){
+      document.documentElement.style.setProperty('--accent',customHex);
+      const r=parseInt(customHex.slice(1,3),16),g=parseInt(customHex.slice(3,5),16),b=parseInt(customHex.slice(5,7),16);
+      document.documentElement.style.setProperty('--accent-rgb',`${r},${g},${b}`);
+      document.documentElement.style.setProperty('--accent-glow',`rgba(${r},${g},${b},.15)`);
+    }
+  } else {
+    document.documentElement.setAttribute('data-accent',savedAccent||'violet');
+  }
   // Afficher l'overlay pendant le chargement
   const overlay=document.getElementById('loading-overlay');
   if(overlay)overlay.style.display='flex';
