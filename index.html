@@ -1274,47 +1274,7 @@ function showSync(icon){
 }
 
 // ═══ STATE ═══
-const DAILY=[
-  // MATIN
-  {id:'t22',label:'Hygiène réveil',done:false,cat:'mental',group:'matin'},
-  {id:'t25',label:'1 big dump morning',done:false,cat:'mental',group:'matin'},
-  {id:'t26',label:'2 priorités morning',done:false,cat:'mental',group:'matin'},
-  {id:'t27',label:'3 gratitudes morning',done:false,cat:'mental',group:'matin'},
-  {id:'t32',label:'Lecture matin',done:false,cat:'mental',group:'matin'},
-  // SPORT
-  {id:'t17',label:'Sport du jour ✓',done:false,cat:'sport',group:'sport'},
-  // CORPS
-  {id:'t7',label:'2L eau minimum',done:false,cat:'corps',group:'corps'},
-  {id:'t8',label:'Lumière du jour 15 min',done:false,cat:'corps',group:'corps'},
-  {id:'t20',label:'112g protéines',done:false,cat:'corps',group:'corps'},
-  {id:'t36',label:'Douche froide',done:false,cat:'corps',group:'corps'},
-  {id:'t14',label:'Créatine',done:false,cat:'corps',group:'corps'},
-  {id:'t16',label:'Oméga 3',done:false,cat:'corps',group:'corps'},
-  // BUSINESS
-  {id:'t3',label:'Travail Agence',done:false,cat:'business',group:'business'},
-  {id:'t5',label:'Code de la route 1h',done:false,cat:'code',scheduleTag:'route',group:'business'},
-  {id:'t6',label:'n8n / IA 30 min',done:false,cat:'ia',scheduleTag:'n8n',group:'business'},
-  // NUTRITION
-  {id:'t18',label:'Nutrition complète ✓',done:false,cat:'nutrition',group:'nutrition'},
-  {id:'t31',label:'Walk 15mn post nutrition',done:false,cat:'corps',group:'nutrition'},
-  // SOIR
-  {id:'t2',label:'Méditation 30 min',done:false,cat:'mental',group:'soir'},
-  {id:'t33',label:'Lecture soir',done:false,cat:'mental',group:'soir'},
-  {id:'t28',label:'1 big dump soir',done:false,cat:'mental',group:'soir'},
-  {id:'t29',label:'Préparer le lendemain',done:false,cat:'mental',group:'soir'},
-  {id:'t30',label:'3 gratitudes soir',done:false,cat:'mental',group:'soir'},
-  {id:'t23',label:'Hygiène couché',done:false,cat:'mental',group:'soir'},
-  {id:'t24',label:'Alarm coucher',done:false,cat:'mental',group:'soir'},
-  // DISCIPLINE
-  {id:'t11',label:'No fap',done:false,cat:'discipline',group:'discipline'},
-  {id:'t13',label:'No doomscroll',done:false,cat:'discipline',group:'discipline'},
-  {id:'t12',label:'No Sofia',done:false,cat:'discipline',activeDays:[0,2,3,4,6],group:'discipline'},
-  {id:'t19',label:'No smoke',done:false,cat:'discipline',group:'discipline'},
-  {id:'t34',label:'No alcohol',done:false,cat:'discipline',group:'discipline'},
-  {id:'t35',label:'No video games',done:false,cat:'discipline',group:'discipline'},
-  // SOMMEIL
-  {id:'t10',label:'Couché avant minuit',done:false,cat:'mental',group:'sommeil'},
-];
+const DAILY=[];
 
 // ═══ ÉTAT INITIAL VIERGE ═══
 const DEFAULT_STATE={
@@ -2578,21 +2538,12 @@ function getDayDate(idx){
 }
 
 const MEAL_DATA={
-  breakfast:{time:'8h30',name:'Petit-déjeuner',options:['Lait + banane + créatine','Skyr + miel + muesli + fruit + créatine']},
-  snack:{time:'16h30',name:'Collation',options:['Yaourt grec + banane','Skyr + miel + muesli','Houmous + wrap + concombre']},
-  dinner:{time:'19h30',name:'Dîner',options:['Saumon 200g + 2 œufs + asperges/concombre + semoule','Rumsteak 200g + sucrine + avocat + 2 œufs','Œufs (4) au plat + salade + pain complet']}
+  breakfast:{time:'',name:'Petit-déjeuner',options:[]},
+  snack:{time:'',name:'Collation',options:[]},
+  dinner:{time:'',name:'Dîner',options:[]}
 };
-const LUNCH_PACKS=[
-  {label:'Pack 1',desc:'Rumsteak 200g + semoule + salade + avocat'},
-  {label:'Pack 2',desc:'Wraps + poulet/dinde + sucrine/concombre/cornichons + sauce yaourt citron + avocat'},
-  {label:'Pack 3',desc:'Thon boîte + salade + maïs + cornichons + pain complet'}
-];
-const SHOPPING_ITEMS={
-  breakfast:['Lait','Banane','Créatine','Skyr','Miel','Muesli'],
-  lunch:['Rumsteak','Semoule','Salade verte','Avocat','Wraps','Poulet ou dinde','Sucrine','Concombre','Cornichons','Sauce yaourt citron','Thon en boîte','Maïs','Pain complet'],
-  snack:['Yaourt grec','Banane','Skyr','Miel','Muesli','Houmous','Wrap','Concombre'],
-  dinner:['Saumon','Œufs','Asperges','Concombre','Semoule','Rumsteak','Sucrine','Avocat','Pain complet']
-};
+const LUNCH_PACKS=[];
+const SHOPPING_ITEMS={breakfast:[],lunch:[],snack:[],dinner:[]};
 
 function nutriSelectOpt(dateKey,mealId,optIdx){
   if(!S.nutritionChecks)S.nutritionChecks={};
@@ -2705,31 +2656,13 @@ function renderNutrition(dir=''){
 
 // ═══ SPORT ═══
 const SPORT_PROG=[
-  {day:'Lundi',type:'Upper',tours:4,tourLabel:'Série',restTime:90,
-    warmup:['2 min jumping jacks','Rotations épaules 10× chaque sens','Rotations poignets 10× chaque sens','Cercles de bras avant + arrière 15 reps','Mobilité thoracique : rotation assis 8× côté'],
-    exos:[{id:'se1',l:'Pompes déclinées lestées',s:'6-12 reps'},{id:'se2',l:'Dips chaise',s:'8-15 reps'},{id:'se3',l:'Développé militaire',s:'10-15 reps'},{id:'se4',l:'Élévations latérales',s:'15-25 reps'},{id:'se5',l:'Curl biceps',s:'12-20 reps'},{id:'se6',l:'Planche',s:'45-60s'}],
-    stretch:['Étirement pectoral au mur 30s × côté','Étirement épaule croisée 30s × côté','Étirement biceps pouce bas 20s × côté','Roulement lent nuque 30s','Posture enfant décompression 60s']},
-  {day:'Mardi',type:'Lower + Core',tours:4,tourLabel:'Série',restTime:90,
-    warmup:['2 min high knees','Rotations hanches 10× chaque sens','Balancés de jambes latéraux 15× jambe','Squats corporels lents × 10 tempo 3s','Hip circles debout 10× chaque sens'],
-    exos:[{id:'se7',l:'Squat tempo lesté',s:'10-15 reps'},{id:'se8',l:'Bulgares',s:'8-12 reps/jambe'},{id:'se9',l:'Hip thrust',s:'12-25 reps'},{id:'se10',l:'Mollets debout',s:'20-30 reps'},{id:'se11',l:'Dead bug',s:'12 reps/côté'},{id:'se12',l:'Planche',s:'45s'}],
-    stretch:['Étirement quadriceps debout 30s × jambe','Étirement ischio assis jambe tendue 30s × jambe','Fente basse étirement fléchisseur 30s × côté','Étirement mollet au mur 30s × jambe','Pigeon yoga au sol 45s × côté']},
-  {day:'Mercredi',type:'Repos',rest:true,restNote:'Marche légère 10-15 min · Pas d\'entraînement'},
-  {day:'Jeudi',type:'Back + Arms',tours:4,tourLabel:'Série',restTime:90,
-    warmup:['2 min jumping jacks','Rotations épaules 10× chaque sens','Band pull-apart simulé 15 reps','Rotations thoraciques assis 10× côté','Étirement dynamique latissimus 10× côté'],
-    exos:[{id:'se13',l:'Rowing unilatéral sac',s:'10-20 reps/bras'},{id:'se14',l:'Oiseau buste penché',s:'15-25 reps'},{id:'se15',l:'Curl marteau',s:'12-20 reps'},{id:'se16',l:'Curl biceps supination',s:'12-20 reps'},{id:'se17',l:'Superman hold',s:'30-45s'}],
-    stretch:['Étirement grand dorsal bras levé 30s × côté','Étirement biceps bras en arrière 20s × côté','Torsion assis rhomboïdes 30s × côté','Posture enfant élargie dorsaux 60s','Décompression colonne suspendu 30s']},
-  {day:'Vendredi',type:'Circuit densité',note:'4 tours · Repos 90s entre tours',tours:4,tourLabel:'Tour',restTime:90,
-    warmup:['2 min high knees','1 min jumping jacks','Rotations complètes épaules + hanches 10×','Squats sautés × 10 30% intensité','Mobilité thoracique rotation 10×'],
-    exos:[{id:'se18',l:'Pompes',s:'8-15 reps'},{id:'se19',l:'Squat lesté',s:'12-20 reps'},{id:'se20',l:'Rowing sac',s:'12-20 reps'},{id:'se21',l:'Dips',s:'8-15 reps'},{id:'se22',l:'Planche',s:'45s'}],
-    stretch:['Étirement pectoral au mur 30s × côté','Fente étirement complet 30s × côté','Torsion assis dos 30s × côté','Posture enfant 60s','Corps entier extension + rotation 30s']},
-  {day:'Samedi',type:'Pump + Posture',tours:4,tourLabel:'Série',restTime:90,
-    warmup:['2 min jumping jacks','Rotations épaules 15× chaque sens','Cercles de bras géants 10 reps','Face pull simulation 15 reps','Mobilité posturale cat-cow × 10'],
-    exos:[{id:'se23',l:'Pompes prise large',s:'max-3 reps'},{id:'se24',l:'Élévations latérales',s:'20 reps'},{id:'se25',l:'Oiseau buste penché',s:'20 reps'},{id:'se26',l:'Curl biceps',s:'15-20 reps'}],
-    stretch:['Étirement pectoral porte 30s','Étirement épaule croisée 30s × côté','Correcteur postural prise omoplate 45s','Étirement biceps bras en arrière 20s × côté','Décompression nuque 30s × côté']},
-  {day:'Dimanche',type:'Rando + Mobilité',
-    warmup:['Rotations chevilles 10× chaque sens avant départ','Rotations hanches 10× chaque sens','Fentes dynamiques 10× jambe','Étirements mollets dynamiques 10×'],
-    exos:[{id:'se27',l:'Rando 3-4h terrain naturel',s:''}],
-    stretch:['Mobilité hanches cercles + fentes profondes 2 min','Étirements quadriceps debout 30s × jambe','Étirements mollets au mur 30s × jambe','Étirements pectoraux au mur 30s × côté','Exercices respiration diaphragmatique 5 cycles','Posture enfant décompression 60s']}
+  {day:'Lundi',type:'',warmup:[],exos:[],stretch:[]},
+  {day:'Mardi',type:'',warmup:[],exos:[],stretch:[]},
+  {day:'Mercredi',type:'',warmup:[],exos:[],stretch:[]},
+  {day:'Jeudi',type:'',warmup:[],exos:[],stretch:[]},
+  {day:'Vendredi',type:'',warmup:[],exos:[],stretch:[]},
+  {day:'Samedi',type:'',warmup:[],exos:[],stretch:[]},
+  {day:'Dimanche',type:'',warmup:[],exos:[],stretch:[]}
 ];
 
 function sportToggle(dateKey,id){
@@ -3077,6 +3010,11 @@ function runMigrations(){
 }
 
 async function initApp(){
+  // Reset si version changée (vide toutes les données sauvegardées)
+  if(localStorage.getItem('jtb3_ver')!=='2'){
+    Object.keys(localStorage).filter(k=>k.startsWith('jtb3')).forEach(k=>localStorage.removeItem(k));
+    localStorage.setItem('jtb3_ver','2');
+  }
   // 1. Charger depuis le serveur (source principale = fichier disque)
   let serverData=null;
   try{const r=await fetch('/backup/latest');if(r.ok)serverData=await r.json();}catch(e){}
